@@ -1,0 +1,5 @@
+G:\Projects\ImageLib2005\bin\Release\Kaliko.ImageLibrary.dll
+G:\Projects\ImageLib2005\bin\Release\Kaliko.ImageLibrary.pdb
+G:\Projects\ImageLib2005\obj\Release\ResolveAssemblyReference.cache
+G:\Projects\ImageLib2005\obj\Release\Kaliko.ImageLibrary.dll
+G:\Projects\ImageLib2005\obj\Release\Kaliko.ImageLibrary.pdb

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageLibrary", "ImageLibrary.csproj", "{073C7180-35E8-442A-9334-AA3F529C0985}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{4381B75F-8E8B-4F82-AABC-A16AD72D201A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{073C7180-35E8-442A-9334-AA3F529C0985}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{073C7180-35E8-442A-9334-AA3F529C0985}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{073C7180-35E8-442A-9334-AA3F529C0985}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{073C7180-35E8-442A-9334-AA3F529C0985}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4381B75F-8E8B-4F82-AABC-A16AD72D201A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4381B75F-8E8B-4F82-AABC-A16AD72D201A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4381B75F-8E8B-4F82-AABC-A16AD72D201A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4381B75F-8E8B-4F82-AABC-A16AD72D201A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
