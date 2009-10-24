@@ -1,0 +1,8 @@
+G:\Projects\ImageLib2005\TestApp\bin\Release\testimage.jpg
+G:\Projects\ImageLib2005\TestApp\bin\Release\TestApp.exe
+G:\Projects\ImageLib2005\TestApp\bin\Release\TestApp.pdb
+G:\Projects\ImageLib2005\TestApp\bin\Release\Kaliko.ImageLibrary.dll
+G:\Projects\ImageLib2005\TestApp\bin\Release\Kaliko.ImageLibrary.pdb
+G:\Projects\ImageLib2005\TestApp\obj\Release\ResolveAssemblyReference.cache
+G:\Projects\ImageLib2005\TestApp\obj\Release\TestApp.exe
+G:\Projects\ImageLib2005\TestApp\obj\Release\TestApp.pdb
