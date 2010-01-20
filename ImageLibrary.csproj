@@ -38,6 +38,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColorHandler.cs" />
+    <Compile Include="Filters\BrightnessFilter.cs" />
+    <Compile Include="Filters\ContrastFilter.cs" />
+    <Compile Include="Filters\DesaturationFilter.cs" />
+    <Compile Include="Filters\GaussianBlurFilter.cs" />
+    <Compile Include="Filters\IFilter.cs" />
+    <Compile Include="Filters\InvertFilter.cs" />
+    <Compile Include="Filters\UnsharpMaskFilter.cs" />
     <Compile Include="KalikoImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
