@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.Runtime.InteropServices;
 using System.Net;
 using System.IO;
 
@@ -111,7 +112,7 @@ namespace Kaliko.ImageLibrary {
         /// </example>
         /// <param name="filepath">Local filepath or internet URL</param>
         public KalikoImage(string filepath) {
-            string prefix = filepath.Substring(0, 8).ToLower();
+            string prefix = filepath.Length > 8 ? filepath.Substring(0, 8).ToLower() : "";
 
             if(prefix.StartsWith("http://") || prefix.StartsWith("https://")) {
                 // Load from URL
@@ -150,6 +151,19 @@ namespace Kaliko.ImageLibrary {
             }
             set {
                 _image = value;
+            }
+        }
+
+
+        public int Width {
+            get {
+                return _image.Width;
+            }
+        }
+
+        public int Height {
+            get {
+                return _image.Height;
             }
         }
 
@@ -380,7 +394,7 @@ namespace Kaliko.ImageLibrary {
                 else {
                     imgHeight = (_image.Height * width) / _image.Width;
                 }
-
+                
                 image = new KalikoImage(width, height, _backgroundColor);
                 Graphics g = Graphics.FromImage(image._image);
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -512,6 +526,59 @@ namespace Kaliko.ImageLibrary {
 
         #endregion
 
+
+        #region Functions for filters and bitmap manipulation
+
+        private byte[] _byteArray;
+
+        /// <summary>
+        /// ByteArray matching PixelFormat.Format32bppArgb (bgrA in real life)
+        /// </summary>
+        public byte[] ByteArray {
+            get {
+                if(_byteArray == null) {
+                    BitmapData data = ((Bitmap)_image).LockBits(new Rectangle(0, 0, _image.Width, _image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    int length = _image.Width * _image.Height * 4;
+                    _byteArray = new byte[length];
+
+                    if(data.Stride == _image.Width * 4) {
+                        Marshal.Copy(data.Scan0, _byteArray, 0, length);
+                    }
+                    else {
+                        for(int i = 0, l = _image.Height;i < l;i++) {
+                            IntPtr p = new IntPtr(data.Scan0.ToInt32() + data.Stride * i);
+                            Marshal.Copy(p, _byteArray, i * _image.Width * 4, _image.Width * 4);
+                        }
+                    }
+
+                    ((Bitmap)_image).UnlockBits(data);
+                }
+                return _byteArray;
+            }
+            set {
+                BitmapData data = ((Bitmap)_image).LockBits(new Rectangle(0, 0, _image.Width, _image.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+                if(data.Stride == _image.Width * 4) {
+                    Marshal.Copy(value, 0, data.Scan0, value.Length);
+                }
+                else {
+                    for(int i = 0, l = _image.Height;i < l;i++) {
+                        IntPtr p = new IntPtr(data.Scan0.ToInt32() + data.Stride * i);
+                        Marshal.Copy(value, i * _image.Width * 4, p, _image.Width * 4);
+                    }
+                }
+
+                ((Bitmap)_image).UnlockBits(data);
+            }
+        }
+
+
+
+        public void ApplyFilter(Filters.IFilter filter) {
+            filter.run(this);
+        }
+
+        #endregion
 
 
     }
