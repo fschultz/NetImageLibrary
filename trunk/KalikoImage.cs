@@ -453,6 +453,33 @@ namespace Kaliko.ImageLibrary {
             _g.DrawImageUnscaled(image, x, y);
         }
 
+
+
+        public void BlitFill(string fileName) {
+            System.Drawing.Image mark = System.Drawing.Image.FromFile(fileName);
+            BlitFill(mark);
+            mark.Dispose();
+        }
+
+
+        public void BlitFill(KalikoImage image) {
+            BlitFill(image._image);
+        }
+
+
+        public void BlitFill(Image image) {
+            int width = image.Width;
+            int height = image.Height;
+            int columns = (int)Math.Ceiling((float)_image.Width / width);
+            int rows = (int)Math.Ceiling((float)_image.Width / width);
+
+            for(int y = 0;y < rows;y++) {
+                for(int x = 0;x < columns;x++) {
+                    _g.DrawImageUnscaled(image, x * width, y * height);
+                }
+            }
+        }
+
         #endregion
 
 
