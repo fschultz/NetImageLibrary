@@ -385,16 +385,13 @@ namespace Kaliko.ImageLibrary {
                 g.DrawImage(_image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
             }
             else if(method == ThumbnailMethod.Pad) {
-                int imgWidth = width;
-                int imgHeight = height;
+                // Rewritten to fix issue #1. Thanks to Cosmin!
+                float hRatio = (float)_image.Height / (float)height;
+                float wRatio = (float)_image.Width / (float)width;
+                float newRatio = hRatio > wRatio ? hRatio : wRatio;
+                int imgHeight = (int)(_image.Height / newRatio);
+                int imgWidth = (int)(_image.Width / newRatio);
 
-                if(imageRatio > thumbRatio) {
-                    imgWidth = (_image.Width * height) / _image.Height;
-                }
-                else {
-                    imgHeight = (_image.Height * width) / _image.Width;
-                }
-                
                 image = new KalikoImage(width, height, _backgroundColor);
                 Graphics g = Graphics.FromImage(image._image);
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
