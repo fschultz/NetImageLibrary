@@ -24,8 +24,6 @@
  */
 
 using System;
-using System.Drawing;
-using System.Text;
 
 namespace Kaliko.ImageLibrary.Filters {
     public class GaussianBlurFilter : IFilter {
@@ -39,7 +37,7 @@ namespace Kaliko.ImageLibrary.Filters {
         }
 
 
-        public void run(KalikoImage image) {
+        public void Run(KalikoImage image) {
             byte[] b = image.ByteArray;
             byte[] dest = new byte[b.Length];
 
@@ -127,7 +125,7 @@ namespace Kaliko.ImageLibrary.Filters {
             double[] kernel = new double[gaussianWidth];
 
             // Set the maximum value of the Gaussian curve  
-            double sd = 255;
+            const double sd = 255;
 
             // Set the width of the Gaussian curve  
             double range = gaussianWidth;
@@ -154,7 +152,7 @@ namespace Kaliko.ImageLibrary.Filters {
             kernel[half] = 1;
 
             for(int weight = 1;weight < half + 1;++weight) {
-                double x = 3 * (double)weight / (double)half;
+                double x = 3 * (double)weight / half;
                 //   Corresponding symmetric weights
                 kernel[half - weight] = kernel[half + weight] = Math.Exp(-x * x / 2);
             }

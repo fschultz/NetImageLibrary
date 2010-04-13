@@ -22,8 +22,6 @@
  * THE SOFTWARE.
  * 
  */
-
-using System;
 using System.Drawing;
 
 namespace Kaliko.ImageLibrary {

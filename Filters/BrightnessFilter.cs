@@ -24,8 +24,6 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kaliko.ImageLibrary.Filters {
     public class BrightnessFilter : IFilter {
@@ -36,18 +34,17 @@ namespace Kaliko.ImageLibrary.Filters {
             _brightness = 1 + ((double)changeInBrightness / 100);
         }
 
-        public void run(KalikoImage image) {
+        public void Run(KalikoImage image) {
             PrecalculateTable();
             ChangeBrightness(image);
         }
 
         private void PrecalculateTable() {
             _precalcTable = new byte[256];
-            int val;
 
             // Precalculate all changes
             for(int i = 0;i < 256;i++) {
-                val = (int)Math.Round(i * _brightness);
+                int val = (int)Math.Round(i * _brightness);
                 if(val < 0) {
                     val = 0;
                 }

@@ -28,11 +28,11 @@ using System.Drawing;
 
 namespace Kaliko.ImageLibrary.Filters {
     public class InvertFilter : IFilter {
-        public void run(KalikoImage image) {
+        public void Run(KalikoImage image) {
             InvertImage(image);
         }
 
-        private void InvertImage(KalikoImage image) {
+        private static void InvertImage(KalikoImage image) {
             byte[] b = image.ByteArray;
 
             for(int i = 0, l = b.Length;i < l;i += 4) {

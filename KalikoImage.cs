@@ -61,16 +61,6 @@ namespace Kaliko.ImageLibrary {
         #region Constructors and destructors
 
         /// <summary>
-        /// Private constructor
-        /// </summary>
-        /// <remarks>
-        /// This constructor is not public to ensure that a KalikoImage 
-        /// object always will have an image and a graphics object.
-        /// </remarks>
-        private KalikoImage() {
-        }
-
-        /// <summary>
         /// Create a KalikoImage from a System.Drawing.Image.
         /// </summary>
         /// <param name="image"></param>
@@ -116,7 +106,7 @@ namespace Kaliko.ImageLibrary {
 
             if(prefix.StartsWith("http://") || prefix.StartsWith("https://")) {
                 // Load from URL
-                LoadImageFromURL(filepath);
+                LoadImageFromUrl(filepath);
             }
             else {
                 // Load from local disk
@@ -185,7 +175,7 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        public System.Drawing.Color Color {
+        public Color Color {
             get {
                 return _color;
             }
@@ -246,8 +236,8 @@ namespace Kaliko.ImageLibrary {
 
 
         private void CreateImage(int width, int height) {
-            Bitmap bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            _image = (Image)bitmap;
+            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            _image = bitmap;
             _g = Graphics.FromImage(_image);
         }
 
@@ -257,7 +247,7 @@ namespace Kaliko.ImageLibrary {
         #region Functions for text
 
         public void SetFont(string fileName, float size, FontStyle fontStyle) {
-            System.Drawing.Text.PrivateFontCollection pf = new System.Drawing.Text.PrivateFontCollection();
+            PrivateFontCollection pf = new PrivateFontCollection();
             pf.AddFontFile(fileName);
             _font = new Font(pf.Families[0], size, fontStyle);
         }
@@ -265,7 +255,7 @@ namespace Kaliko.ImageLibrary {
 
         public void WriteText(string txt, int x, int y) {
             _g.TextRenderingHint = _textrenderinghint;
-            _g.DrawString(txt, _font, new System.Drawing.SolidBrush(_color), new Point(x, y));
+            _g.DrawString(txt, _font, new SolidBrush(_color), new Point(x, y));
         }
 
         #endregion
@@ -290,7 +280,7 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="stream"></param>
         public void LoadImage(Stream stream) {
-            _image = System.Drawing.Image.FromStream(stream);
+            _image = Image.FromStream(stream);
 
             MakeImageNonIndexed();
 
@@ -301,7 +291,7 @@ namespace Kaliko.ImageLibrary {
         /// Load an image from an URL
         /// </summary>
         /// <param name="url"></param>
-        public void LoadImageFromURL(string url) {
+        public void LoadImageFromUrl(string url) {
             WebRequest request = WebRequest.Create(url);
             request.Credentials = CredentialCache.DefaultCredentials;
 
@@ -329,7 +319,7 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         private void MakeImageNonIndexed() {
             if(IndexedPalette) {
-                _image = (Image)new Bitmap(new Bitmap(_image));
+                _image = new Bitmap(new Bitmap(_image));
             }
         }
 
@@ -386,8 +376,8 @@ namespace Kaliko.ImageLibrary {
             }
             else if(method == ThumbnailMethod.Pad) {
                 // Rewritten to fix issue #1. Thanks to Cosmin!
-                float hRatio = (float)_image.Height / (float)height;
-                float wRatio = (float)_image.Width / (float)width;
+                float hRatio = _image.Height / (float)height;
+                float wRatio = _image.Width / (float)width;
                 float newRatio = hRatio > wRatio ? hRatio : wRatio;
                 int imgHeight = (int)(_image.Height / newRatio);
                 int imgWidth = (int)(_image.Width / newRatio);
@@ -425,7 +415,7 @@ namespace Kaliko.ImageLibrary {
 
 
         public void BlitImage(string fileName, int x, int y) {
-            System.Drawing.Image mark = System.Drawing.Image.FromFile(fileName);
+            Image mark = Image.FromFile(fileName);
             BlitImage(mark, x, y);
             mark.Dispose();
         }
@@ -453,7 +443,7 @@ namespace Kaliko.ImageLibrary {
 
 
         public void BlitFill(string fileName) {
-            System.Drawing.Image mark = System.Drawing.Image.FromFile(fileName);
+            Image mark = Image.FromFile(fileName);
             BlitFill(mark);
             mark.Dispose();
         }
@@ -483,8 +473,8 @@ namespace Kaliko.ImageLibrary {
         #region Functions for image saving and streaming
 
         private static ImageCodecInfo GetEncoderInfo(String mimeType) {
-            ImageCodecInfo[] encoders;
-            encoders = ImageCodecInfo.GetImageEncoders();
+            ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
+
             for(int j = 0, l = encoders.Length;j < l;++j) {
                 if(encoders[j].MimeType == mimeType) {
                     return encoders[j];
@@ -494,17 +484,17 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        public void StreamJPG(long quality, string filename) {
-            SaveJPG(PrepareImageStream(filename, "image/jpeg"), quality);
+        public void StreamJpg(long quality, string filename) {
+            SaveJpg(PrepareImageStream(filename, "image/jpeg"), quality);
         }
 
 
-        public void StreamGIF(string filename) {
+        public void StreamGif(string filename) {
             SaveGif(PrepareImageStream(filename, "image/gif"));
         }
 
 
-        private Stream PrepareImageStream(string filename, string mime) {
+        private static Stream PrepareImageStream(string filename, string mime) {
             System.Web.HttpResponse stream = System.Web.HttpContext.Current.Response;
             stream.Clear();
             stream.ClearContent();
@@ -514,7 +504,7 @@ namespace Kaliko.ImageLibrary {
             return stream.OutputStream;
         }
 
-        public void SaveJPG(Stream stream, long quality) {
+        public void SaveJpg(Stream stream, long quality) {
             EncoderParameters encparam = new EncoderParameters(1);
             encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
             ImageCodecInfo ic = GetEncoderInfo("image/jpeg");
@@ -522,7 +512,7 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        public void SaveJPG(string filename, long quality) {
+        public void SaveJpg(string filename, long quality) {
             EncoderParameters encparam = new EncoderParameters(1);
             encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
             ImageCodecInfo ic = GetEncoderInfo("image/jpeg");
@@ -530,7 +520,7 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        public void SavePNG(string filename, long quality) {
+        public void SavePng(string filename, long quality) {
             EncoderParameters encparam = new EncoderParameters(1);
             encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
             ImageCodecInfo ic = GetEncoderInfo("image/png");
@@ -538,7 +528,7 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        public void SaveGif(System.IO.Stream stream) {
+        public void SaveGif(Stream stream) {
             _image.Save(stream, ImageFormat.Gif);
         }
 
@@ -599,7 +589,7 @@ namespace Kaliko.ImageLibrary {
 
 
         public void ApplyFilter(Filters.IFilter filter) {
-            filter.run(this);
+            filter.Run(this);
         }
 
         #endregion
