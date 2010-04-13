@@ -23,11 +23,6 @@
  * 
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-
 namespace Kaliko.ImageLibrary.Filters {
     public class UnsharpMaskFilter : IFilter {
         double _radius;
@@ -38,15 +33,15 @@ namespace Kaliko.ImageLibrary.Filters {
             _amount = amount;
         }
 
-        public void run(KalikoImage image) {
+        public void Run(KalikoImage image) {
             Sharpen(image, _amount, _radius);
         }
 
-        private void Sharpen(KalikoImage image, double amount, double radius) {
+        private static void Sharpen(KalikoImage image, double amount, double radius) {
             byte[] src = image.ByteArray;
             byte[] dest = new byte[src.Length];
 
-            GaussianBlurFilter.GaussianBlur(image.Width, image.Height, _radius, _amount, ref src, ref dest);
+            GaussianBlurFilter.GaussianBlur(image.Width, image.Height, radius, amount, ref src, ref dest);
 
             int i = 0;
             int r, g, b;

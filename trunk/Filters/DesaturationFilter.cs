@@ -23,21 +23,14 @@
  * 
  */
 
-using System;
-using System.Drawing;
-using System.Text;
-
 namespace Kaliko.ImageLibrary.Filters {
     public class DesaturationFilter : IFilter {
 
-        public DesaturationFilter() {
-        }
-
-        public void run(KalikoImage image) {
+        public void Run(KalikoImage image) {
             DesaturateImage(image);
         }
 
-        private void DesaturateImage(KalikoImage image) {
+        private static void DesaturateImage(KalikoImage image) {
             byte[] b = image.ByteArray;
 
             for(int i = 0, l = b.Length;i < l;i += 4) {

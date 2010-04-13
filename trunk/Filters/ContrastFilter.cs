@@ -24,8 +24,6 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kaliko.ImageLibrary.Filters {
     public class ContrastFilter : IFilter {
@@ -35,17 +33,16 @@ namespace Kaliko.ImageLibrary.Filters {
             _contrast = 1 + ((double)changeInContrast / 100);
         }
 
-        public void run(KalikoImage image) {
+        public void Run(KalikoImage image) {
             ChangeContrast(image);
         }
 
         private void ChangeContrast(KalikoImage image) {
             byte[] precalc = new byte[256];
-            double val;
 
             // Precalculate all changes
             for(int i = 0;i < 256;i++) {
-                val = i / 255.0;
+                double val = i / 255.0;
                 val -= 0.5;
                 val *= _contrast;
                 val += 0.5;
