@@ -23,9 +23,6 @@
  * 
  */
 
-using System;
-using System.Drawing;
-
 namespace Kaliko.ImageLibrary.Filters {
     public class InvertFilter : IFilter {
         public void Run(KalikoImage image) {
