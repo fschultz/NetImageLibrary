@@ -520,6 +520,14 @@ namespace Kaliko.ImageLibrary {
         }
 
 
+        public void SavePng(Stream stream, long quality) {
+            EncoderParameters encparam = new EncoderParameters(1);
+            encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
+            ImageCodecInfo ic = GetEncoderInfo("image/png");
+            _image.Save(stream, ic, encparam);
+        }
+
+        
         public void SavePng(string filename, long quality) {
             EncoderParameters encparam = new EncoderParameters(1);
             encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
