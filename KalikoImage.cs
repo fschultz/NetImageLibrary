@@ -546,6 +546,26 @@ namespace Kaliko.ImageLibrary {
         }
 
 
+        public void SaveBmp(Stream stream) {
+            _image.Save(stream, ImageFormat.Bmp);
+        }
+
+
+        public void SaveBmp(string fileName) {
+            _image.Save(fileName, ImageFormat.Bmp);
+        }
+
+
+        public void SaveBmp(Stream stream, ImageFormat format) {
+            _image.Save(stream, format);
+        }
+
+
+        public void SaveImage(string fileName, ImageFormat format) {
+            _image.Save(fileName, format);
+        }
+
+
         #endregion
 
 
