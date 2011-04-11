@@ -194,7 +194,9 @@ namespace Kaliko.ImageLibrary {
             }
         }
 
-
+        /// <summary>
+        /// Check if the current image has an indexed palette.
+        /// </summary>
         public bool IndexedPalette {
             get {
                 switch(_image.PixelFormat) {
@@ -209,6 +211,18 @@ namespace Kaliko.ImageLibrary {
                         return false;
                 }
             }
+        }
+
+        public bool IsPortrait {
+            get { return Width < Height; }
+        }
+
+        public bool IsLandscape {
+            get { return Width > Height; }
+        }
+
+        public bool IsSquare {
+            get { return Width == Height; }
         }
 
 
@@ -234,7 +248,11 @@ namespace Kaliko.ImageLibrary {
             return newImage;
         }
 
-
+        /// <summary>
+        /// Instanciate an empty image of the requested resolution.
+        /// </summary>
+        /// <param name="width">Width of the new image</param>
+        /// <param name="height">Height of the new image</param>
         private void CreateImage(int width, int height) {
             Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
             _image = bitmap;
@@ -246,6 +264,17 @@ namespace Kaliko.ImageLibrary {
 
         #region Functions for text
 
+        /// <summary>
+        /// Load a font for further use.
+        /// </summary>
+        /// <param name="fileName">Path to font file</param>
+        /// <param name="size">Font size</param>
+        /// <param name="fontStyle">Font style</param>
+        /// <example>
+        /// KalikoImage image = new KalikoImage(200, 200);
+        /// image.SetFont("c:\\fontpath\\arial.ttf", 12f, FontStyle.Regular);
+        /// image.WriteText("Hello world!", 0, 10);
+        /// </example>
         public void SetFont(string fileName, float size, FontStyle fontStyle) {
             PrivateFontCollection pf = new PrivateFontCollection();
             pf.AddFontFile(fileName);
@@ -266,7 +295,7 @@ namespace Kaliko.ImageLibrary {
         /// <summary>
         /// Load an image from local disk
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">File path</param>
         public void LoadImage(string fileName) {
             _image = Image.FromFile(fileName);
 
@@ -278,7 +307,7 @@ namespace Kaliko.ImageLibrary {
         /// <summary>
         /// Load an image from a stream object (MemoryStream, Stream etc)
         /// </summary>
-        /// <param name="stream"></param>
+        /// <param name="stream">Pointer to stream</param>
         public void LoadImage(Stream stream) {
             _image = Image.FromStream(stream);
 

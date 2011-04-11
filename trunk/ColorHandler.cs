@@ -25,13 +25,16 @@
 using System.Drawing;
 
 namespace Kaliko.ImageLibrary {
+    /// <summary>
+    /// Class to handle color specific code.
+    /// </summary>
     public class ColorHandler {
 
         /// <summary>
         /// Parse a web color type of string (for example "#FF0000") into a System.Drawing.Color object.
         /// </summary>
-        /// <param name="colorString"></param>
-        /// <returns></returns>
+        /// <param name="colorString">Color in string format (i e "#FFFFFF")</param>
+        /// <returns>Color</returns>
         public static Color StringToColor(string colorString) {
             Color color;
             
