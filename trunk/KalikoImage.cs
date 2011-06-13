@@ -45,7 +45,7 @@ namespace Kaliko.ImageLibrary {
         Crop
     }
 
-    public class KalikoImage {
+    public class KalikoImage : IDisposable {
         #region Private variables
 
         private Image _image;
@@ -391,7 +391,7 @@ namespace Kaliko.ImageLibrary {
                 int imgWidth = width;
                 int imgHeight = height;
 
-                if(imageRatio > thumbRatio) {
+                if(imageRatio < thumbRatio) {
                     imgHeight = (_image.Height * width) / _image.Width;
                 }
                 else {
@@ -399,9 +399,8 @@ namespace Kaliko.ImageLibrary {
                 }
 
                 image = new KalikoImage(width, height);
-                Graphics g = Graphics.FromImage(image._image);
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(_image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
+                DrawScaledImage(image._image, _image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
+                //g.DrawImage(_image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
             }
             else if(method == ThumbnailMethod.Pad) {
                 // Rewritten to fix issue #1. Thanks to Cosmin!
@@ -412,9 +411,7 @@ namespace Kaliko.ImageLibrary {
                 int imgWidth = (int)(_image.Width / newRatio);
 
                 image = new KalikoImage(width, height, _backgroundColor);
-                Graphics g = Graphics.FromImage(image._image);
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(_image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
+                DrawScaledImage(image._image, _image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
             }
             else { // ThumbnailMethod.Fit
                 if(imageRatio > thumbRatio) {
@@ -425,12 +422,22 @@ namespace Kaliko.ImageLibrary {
                 }
 
                 image = new KalikoImage(width, height);
-                Graphics g = Graphics.FromImage(image._image);
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(_image, 0, 0, width, height);
+                DrawScaledImage(image._image, _image, 0, 0, width, height);
             }
 
             return image;
+        }
+
+        private static void DrawScaledImage(Image destImage, Image sourceImage, int x, int y, int width, int height) {
+            using(Graphics g = Graphics.FromImage(destImage)) {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                using (ImageAttributes wrapMode = new ImageAttributes()) {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    g.DrawImage(sourceImage, new Rectangle(x, y, width, height), 0, 0, sourceImage.Width, sourceImage.Height, GraphicsUnit.Pixel, wrapMode);
+                    //g.DrawImage(sourceImage, x, y, width, height);
+                }
+            }
         }
 
         #endregion
@@ -513,23 +520,23 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        public void StreamJpg(long quality, string filename) {
-            SaveJpg(PrepareImageStream(filename, "image/jpeg"), quality);
+        public void StreamJpg(long quality, string fileName) {
+            SaveJpg(PrepareImageStream(fileName, "image/jpeg"), quality);
         }
 
 
-        public void StreamGif(string filename) {
-            SaveGif(PrepareImageStream(filename, "image/gif"));
+        public void StreamGif(string fileName) {
+            SaveGif(PrepareImageStream(fileName, "image/gif"));
         }
 
 
-        private static Stream PrepareImageStream(string filename, string mime) {
+        private static Stream PrepareImageStream(string fileName, string mime) {
             System.Web.HttpResponse stream = System.Web.HttpContext.Current.Response;
             stream.Clear();
             stream.ClearContent();
             stream.ClearHeaders();
             stream.ContentType = mime;
-            stream.AddHeader("Content-Disposition", "inline;filename=" + filename);
+            stream.AddHeader("Content-Disposition", "inline;filename=" + fileName);
             return stream.OutputStream;
         }
 
@@ -541,11 +548,11 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        public void SaveJpg(string filename, long quality) {
+        public void SaveJpg(string fileName, long quality) {
             EncoderParameters encparam = new EncoderParameters(1);
             encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
             ImageCodecInfo ic = GetEncoderInfo("image/jpeg");
-            _image.Save(filename, ic, encparam);
+            _image.Save(fileName, ic, encparam);
         }
 
 
@@ -557,11 +564,11 @@ namespace Kaliko.ImageLibrary {
         }
 
         
-        public void SavePng(string filename, long quality) {
+        public void SavePng(string fileName, long quality) {
             EncoderParameters encparam = new EncoderParameters(1);
             encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
             ImageCodecInfo ic = GetEncoderInfo("image/png");
-            _image.Save(filename, ic, encparam);
+            _image.Save(fileName, ic, encparam);
         }
 
 
@@ -601,6 +608,7 @@ namespace Kaliko.ImageLibrary {
         #region Functions for filters and bitmap manipulation
 
         private byte[] _byteArray;
+        private bool _disposed;
 
         /// <summary>
         /// ByteArray matching PixelFormat.Format32bppArgb (bgrA in real life)
@@ -651,6 +659,32 @@ namespace Kaliko.ImageLibrary {
 
         #endregion
 
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposed) {
+                if (disposing) {
+                    if(_font != null) {
+                        _font.Dispose();
+                    }
+                    if(_g != null) {
+                        _g.Dispose();
+                    }
+                    if(_image != null) {
+                        _image.Dispose();
+                    }
+                }
+
+                _disposed = true;
+            }
+        }
+
+        ~KalikoImage() {
+            Dispose(false);
+        }
+
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
     }
 }
