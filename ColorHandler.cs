@@ -22,13 +22,18 @@
  * THE SOFTWARE.
  * 
  */
+using System;
 using System.Drawing;
+using System.Globalization;
 
 namespace Kaliko.ImageLibrary {
     /// <summary>
     /// Class to handle color specific code.
     /// </summary>
     public class ColorHandler {
+
+        private ColorHandler() {
+        }
 
         /// <summary>
         /// Parse a web color type of string (for example "#FF0000") into a System.Drawing.Color object.
@@ -42,7 +47,7 @@ namespace Kaliko.ImageLibrary {
             colorString = colorString.TrimStart('#');
 
             // Parse the color string
-            int c = int.Parse(colorString, System.Globalization.NumberStyles.HexNumber);
+            int c = int.Parse(colorString, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
             if(colorString.Length == 3) {
                 // Convert from RGB-form
