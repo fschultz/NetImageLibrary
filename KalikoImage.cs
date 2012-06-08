@@ -287,6 +287,15 @@ namespace Kaliko.ImageLibrary {
             _g.DrawString(txt, _font, new SolidBrush(_color), new Point(x, y));
         }
 
+
+        public void WriteText(string txt, int x, int y, float angle) {
+            _g.TextRenderingHint = _textrenderinghint;
+            _g.TranslateTransform(x, y);
+            _g.RotateTransform(angle);
+            _g.DrawString(txt, _font, new SolidBrush(_color), new Point(0, 0));
+            _g.ResetTransform();
+        }
+
         #endregion
 
 
@@ -384,8 +393,8 @@ namespace Kaliko.ImageLibrary {
 
         public KalikoImage GetThumbnailImage(int width, int height, ThumbnailMethod method) {
             KalikoImage image;
-            double imageRatio = _image.Width / _image.Height;
-            double thumbRatio = width / height;
+            double imageRatio = (double)_image.Width / _image.Height;
+            double thumbRatio = (double)width / height;
 
             if(method == ThumbnailMethod.Crop ) {
                 int imgWidth = width;
@@ -414,7 +423,7 @@ namespace Kaliko.ImageLibrary {
                 DrawScaledImage(image._image, _image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
             }
             else { // ThumbnailMethod.Fit
-                if(imageRatio > thumbRatio) {
+                if(imageRatio < thumbRatio) {
                     width = (_image.Width * height) / _image.Height;
                 }
                 else {
