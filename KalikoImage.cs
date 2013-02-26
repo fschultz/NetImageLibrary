@@ -1,7 +1,7 @@
 /*
  * Kaliko Image Library
  * 
- * Copyright (c) 2009 Fredrik Schultz
+ * Copyright (c) 2013 Fredrik Schultz and Contributors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -194,25 +194,6 @@ namespace Kaliko.ImageLibrary {
             }
         }
 
-        /// <summary>
-        /// Check if the current image has an indexed palette.
-        /// </summary>
-        public bool IndexedPalette {
-            get {
-                switch(_image.PixelFormat) {
-                    case PixelFormat.Undefined:
-                    case PixelFormat.Format1bppIndexed:
-                    case PixelFormat.Format4bppIndexed:
-                    case PixelFormat.Format8bppIndexed:
-                    case PixelFormat.Format16bppGrayScale:
-                    case PixelFormat.Format16bppArgb1555:
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        }
-
         public bool IsPortrait {
             get { return Width < Height; }
         }
@@ -308,7 +289,9 @@ namespace Kaliko.ImageLibrary {
         public void LoadImage(string fileName) {
             _image = Image.FromFile(fileName);
 
-            MakeImageNonIndexed();
+            if (DoesImageNeedToBeConverted) {
+                ConvertImageToTrueColor();
+            }
 
             _g = Graphics.FromImage(_image);
         }
@@ -320,7 +303,9 @@ namespace Kaliko.ImageLibrary {
         public void LoadImage(Stream stream) {
             _image = Image.FromStream(stream);
 
-            MakeImageNonIndexed();
+            if (DoesImageNeedToBeConverted) {
+                ConvertImageToTrueColor();
+            }
 
             _g = Graphics.FromImage(_image);
         }
@@ -352,12 +337,24 @@ namespace Kaliko.ImageLibrary {
             ms.Close();
         }
 
-        /// <summary>
-        /// Check if image has an indexed palette and if so convert to truecolor
-        /// </summary>
-        private void MakeImageNonIndexed() {
-            if(IndexedPalette) {
-                _image = new Bitmap(new Bitmap(_image));
+        private void ConvertImageToTrueColor() {
+            using (_image) {
+                using (Bitmap bitmap = new Bitmap(_image)) {
+                    _image = new Bitmap(bitmap);
+                }
+            }
+        }
+
+        protected bool DoesImageNeedToBeConverted {
+            get {
+                switch (_image.PixelFormat) {
+                    case PixelFormat.Format24bppRgb:
+                    case PixelFormat.Format32bppArgb:
+                    case PixelFormat.Format32bppPArgb:
+                        return false;
+                    default:
+                        return true;
+                }
             }
         }
 
@@ -409,7 +406,6 @@ namespace Kaliko.ImageLibrary {
 
                 image = new KalikoImage(width, height);
                 DrawScaledImage(image._image, _image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
-                //g.DrawImage(_image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
             }
             else if(method == ThumbnailMethod.Pad) {
                 // Rewritten to fix issue #1. Thanks to Cosmin!
@@ -444,7 +440,6 @@ namespace Kaliko.ImageLibrary {
                 using (ImageAttributes wrapMode = new ImageAttributes()) {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                     g.DrawImage(sourceImage, new Rectangle(x, y, width, height), 0, 0, sourceImage.Width, sourceImage.Height, GraphicsUnit.Pixel, wrapMode);
-                    //g.DrawImage(sourceImage, x, y, width, height);
                 }
             }
         }
