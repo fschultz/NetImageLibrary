@@ -1,164 +1,184 @@
+﻿#region License and copyright notice
 /*
- * Kaliko Image Library
+ * Ported to .NET for use in Kaliko.ImageLibrary by Fredrik Schultz 2014
+ *
+ * Original License:
+ * Copyright 2006 Jerry Huxtable
  * 
- * Copyright (c) 2009 Fredrik Schultz
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
-
-using System;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+#endregion
 
 namespace Kaliko.ImageLibrary.Filters {
-    public class GaussianBlurFilter : IFilter {
-        double _radius;
-        double _amount;
+    using System;
 
-        
-        public GaussianBlurFilter(double radius, double amount) {
-            _radius = radius;
-            _amount = amount;
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GaussianBlurFilter : ConvolveFilter {
+        private float _radius;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public GaussianBlurFilter() : this(2) {}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="radius"></param>
+        public GaussianBlurFilter(float radius) {
+            Radius = radius;
         }
 
 
-        public void Run(KalikoImage image) {
-            byte[] b = image.ByteArray;
-            byte[] dest = new byte[b.Length];
+        /// <summary>
+        /// The radius of the kernel, and hence the amount of blur. The bigger the radius, the longer this filter will take.
+        /// </summary>
+        public float Radius {
+            get {
+                return _radius;
+            }
+            set {
+                _radius = value*3.14f;
+                Kernel = CreateKernel(_radius);
+            }
+        }
 
-            GaussianBlur(image.Width, image.Height, _radius, _amount, ref b, ref dest);
 
-            image.ByteArray = dest;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="image"></param>
+        public override void Run(KalikoImage image) {
+            var inPixels = image.IntArray;
+            var outPixels = new int[inPixels.Length];
+
+            if ( _radius > 0 ) {
+                ConvolveAndTranspose(Kernel, inPixels, outPixels, image.Width, image.Height, UseAlpha, UseAlpha && PremultiplyAlpha, false, EdgeMode.Clamp);
+                ConvolveAndTranspose(Kernel, outPixels, inPixels, image.Height, image.Width, UseAlpha, false, UseAlpha && PremultiplyAlpha, EdgeMode.Clamp);
+            }
+
+            image.IntArray = inPixels;
         }
         
 
-        internal static void GaussianBlur(int width, int height, double radius, double amount, ref byte[] src, ref byte[] dst) {
+        /// <summary>
+        /// Blur and transpose a block of ARGB pixels.
+        /// </summary>
+        /// <param name="kernel"></param>
+        /// <param name="inPixels"></param>
+        /// <param name="outPixels"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="alpha"></param>
+        /// <param name="premultiply"></param>
+        /// <param name="unpremultiply"></param>
+        /// <param name="edgeAction"></param>
+        public static void ConvolveAndTranspose(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, bool alpha, bool premultiply, bool unpremultiply, EdgeMode edgeAction) {
+            float[] matrix = kernel.GetKernel();
+            int cols = kernel.Width;
+            int cols2 = cols/2;
 
-            int shift, dest, source;
-            int blurDiam = (int)Math.Pow(radius, 2);
-            int gaussWidth = (blurDiam * 2) + 1;
+            for (int y = 0; y < height; y++) {
+                int index = y;
+                int ioffset = y*width;
+                for (int x = 0; x < width; x++) {
+                    float r = 0, g = 0, b = 0, a = 0;
+                    int moffset = cols2;
+                    for (int col = -cols2; col <= cols2; col++) {
+                        float f = matrix[moffset + col];
 
-            double[] kernel = CreateKernel(gaussWidth, blurDiam);
-
-            // Calculate the sum of the Gaussian kernel      
-            double gaussSum = 0;
-            for(int n = 0;n < gaussWidth;n++) {
-                gaussSum += kernel[n];
-            }
-
-            // Scale the Gaussian kernel
-            for(int n = 0;n < gaussWidth;n++) {
-                kernel[n] = kernel[n] / gaussSum;
-            }
-            //premul = kernel[k] / gaussSum;
-
-
-            // Create an X & Y pass buffer  
-            byte[] gaussPassX = new byte[src.Length];
-
-            // Do Horizontal Pass  
-            for(int y = 0;y < height;y++) {
-                for(int x = 0;x < width;x++) {
-                    dest = y * width + x;
-
-                    // Iterate through kernel  
-                    for(int k = 0;k < gaussWidth;k++) {
-
-                        // Get pixel-shift (pixel dist between dest and source)  
-                        shift = k - blurDiam;
-
-                        // Basic edge clamp  
-                        source = dest + shift;
-                        if(x + shift <= 0 || x + shift >= width) { source = dest; }
-
-                        // Combine source and destination pixels with Gaussian Weight  
-                        gaussPassX[(dest << 2) + 2] = (byte)(gaussPassX[(dest << 2) + 2] + (src[(source << 2) + 2]) * kernel[k]);
-                        gaussPassX[(dest << 2) + 1] = (byte)(gaussPassX[(dest << 2) + 1] + (src[(source << 2) + 1]) * kernel[k]);
-                        gaussPassX[(dest << 2)] = (byte)(gaussPassX[(dest << 2)] + (src[(source << 2)]) * kernel[k]);
+                        if (f != 0) {
+                            int ix = x + col;
+                            if (ix < 0) {
+                                if (edgeAction == EdgeMode.Clamp)
+                                    ix = 0;
+                                else if (edgeAction == EdgeMode.Wrap)
+                                    ix = (x + width)%width;
+                            }
+                            else if (ix >= width) {
+                                if (edgeAction == EdgeMode.Clamp)
+                                    ix = width - 1;
+                                else if (edgeAction == EdgeMode.Wrap)
+                                    ix = (x + width)%width;
+                            }
+                            int rgb = inPixels[ioffset + ix];
+                            int pa = (rgb >> 24) & 0xff;
+                            int pr = (rgb >> 16) & 0xff;
+                            int pg = (rgb >> 8) & 0xff;
+                            int pb = rgb & 0xff;
+                            if (premultiply) {
+                                float a255 = pa*(1.0f/255.0f);
+                                pr = (int)(pr*a255);
+                                pg = (int)(pg*a255);
+                                pb = (int)(pb*a255);
+                            }
+                            a += f*pa;
+                            r += f*pr;
+                            g += f*pg;
+                            b += f*pb;
+                        }
                     }
+                    if (unpremultiply && a != 0 && a != 255) {
+                        float f = 255.0f/a;
+                        r *= f;
+                        g *= f;
+                        b *= f;
+                    }
+                    int ia = alpha ? PixelUtils.Clamp((int)(a + 0.5)) : 0xff;
+                    int ir = PixelUtils.Clamp((int)(r + 0.5));
+                    int ig = PixelUtils.Clamp((int)(g + 0.5));
+                    int ib = PixelUtils.Clamp((int)(b + 0.5));
+                    outPixels[index] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
+                    index += height;
                 }
             }
-
-            // Do Vertical Pass  
-            for(int x = 0;x < width;x++) {
-                for(int y = 0;y < height;y++) {
-                    dest = y * width + x;
-
-                    // Iterate through kernel  
-                    for(int k = 0;k < gaussWidth;k++) {
-
-                        // Get pixel-shift (pixel dist between dest and source)   
-                        shift = k - blurDiam;
-
-                        // Basic edge clamp  
-                        source = dest + (shift * width);
-                        if(y + shift <= 0 || y + shift >= height) { source = dest; }
-
-                        // Combine source and destination pixels with Gaussian Weight  
-                        dst[(dest << 2) + 2] = (byte)(dst[(dest << 2) + 2] + (gaussPassX[(source << 2) + 2]) * kernel[k]);
-                        dst[(dest << 2) + 1] = (byte)(dst[(dest << 2) + 1] + (gaussPassX[(source << 2) + 1]) * kernel[k]);
-                        dst[(dest << 2)] = (byte)(dst[(dest << 2)] + (gaussPassX[(source << 2)]) * kernel[k]);
-                    }
-                }
-            }
         }
 
 
+        /// <summary>
+        /// Make a Gaussian blur kernel.
+        /// </summary>
+        /// <param name="radius"> the blur radius</param>
+        /// <returns>the kernel</returns>
+        public static Kernel CreateKernel(float radius) {
+            var r = (int)Math.Ceiling(radius);
+            int rows = r*2 + 1;
+            var matrix = new float[rows];
+            float sigma = radius/3;
+            float sigma22 = 2*sigma*sigma;
+            var sigmaPi2 = (float)(2*Math.PI*sigma);
+            var sqrtSigmaPi2 = (float)Math.Sqrt(sigmaPi2);
+            float radius2 = radius*radius;
+            float total = 0;
+            int index = 0;
 
-        private static double[] CreateKernel(int gaussianWidth, int blurDiam) {
-            
-            double[] kernel = new double[gaussianWidth];
-
-            // Set the maximum value of the Gaussian curve  
-            const double sd = 255;
-
-            // Set the width of the Gaussian curve  
-            double range = gaussianWidth;
-
-            // Set the average value of the Gaussian curve   
-            double mean = (range / sd);
-
-            // Set first half of Gaussian curve in kernel  
-            for(int pos = 0, len = blurDiam + 1;pos < len;pos++) {
-                // Distribute Gaussian curve across kernel[array]   
-                kernel[gaussianWidth - 1 - pos] = kernel[pos] = Math.Sqrt(Math.Sin((((pos + 1) * (Math.PI / 2)) - mean) / range)) * sd;
+            for (int row = -r; row <= r; row++) {
+                float distance = row*row;
+                if (distance > radius2)
+                    matrix[index] = 0;
+                else
+                    matrix[index] = (float)Math.Exp(-(distance)/sigma22)/sqrtSigmaPi2;
+                total += matrix[index];
+                index++;
             }
 
-            return kernel;
-        }
-
-
-
-
-        private static double[] CreateKernel2(int gaussianWidth, int blurDiam) {
-            double[] kernel = new double[gaussianWidth];
-            int half = gaussianWidth >> 1;
-
-            kernel[half] = 1;
-
-            for(int weight = 1;weight < half + 1;++weight) {
-                double x = 3 * (double)weight / half;
-                //   Corresponding symmetric weights
-                kernel[half - weight] = kernel[half + weight] = Math.Exp(-x * x / 2);
+            for (int i = 0; i < rows; i++) {
+                matrix[i] /= total;
             }
 
-            return kernel;
+            return new Kernel(rows, 1, matrix);
         }
-
     }
 }

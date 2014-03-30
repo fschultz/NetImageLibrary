@@ -1,3 +1,4 @@
+#region License and copyright notice
 /*
  * Kaliko Image Library
  * 
@@ -22,24 +23,25 @@
  * THE SOFTWARE.
  * 
  */
-using System;
-using System.Drawing;
-using System.Globalization;
+#endregion
 
 namespace Kaliko.ImageLibrary {
+    using System;
+    using System.Drawing;
+    using System.Globalization;
+
     /// <summary>
     /// Class to handle color specific code.
     /// </summary>
+    /// <exclude/>
+    /// <excludetoc/>
     public class ColorHandler {
-
-        private ColorHandler() {
-        }
-
         /// <summary>
         /// Parse a web color type of string (for example "#FF0000") into a System.Drawing.Color object.
         /// </summary>
         /// <param name="colorString">Color in string format (i e "#FFFFFF")</param>
         /// <returns>Color</returns>
+        [Obsolete("StringToColor is deprecated, use ColorSpaceHelper.HexToColor instead.")]
         public static Color StringToColor(string colorString) {
             Color color;
             
@@ -47,7 +49,7 @@ namespace Kaliko.ImageLibrary {
             colorString = colorString.TrimStart('#');
 
             // Parse the color string
-            int c = int.Parse(colorString, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+            int c = int.Parse(colorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
             if(colorString.Length == 3) {
                 // Convert from RGB-form

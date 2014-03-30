@@ -1,7 +1,8 @@
+﻿#region License and copyright notice
 /*
  * Kaliko Image Library
  * 
- * Copyright (c) 2013 Fredrik Schultz and Contributors
+ * Copyright (c) 2014 Fredrik Schultz and Contributors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,89 +23,94 @@
  * THE SOFTWARE.
  * 
  */
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
-using System.Runtime.InteropServices;
-using System.Net;
-using System.IO;
+#endregion
 
 namespace Kaliko.ImageLibrary {
-    public enum Direction {
-        Top,
-        Bottom,
-        Left,
-        Right
-    }
+    using System;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.Drawing.Imaging;
+    using System.Drawing.Text;
+    using System.IO;
+    using System.Net;
+    using System.Runtime.InteropServices;
+    using Scaling;
 
-    public enum ThumbnailMethod {
-        Fit,
-        Pad,
-        Crop
-    }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class KalikoImage : IDisposable {
         #region Private variables
 
-        private Image _image;
         private Graphics _g;
         private Font _font;
-        private Color _color;
-        private Color _backgroundColor;
-        private TextRenderingHint _textrenderinghint = TextRenderingHint.ClearTypeGridFit;
 
         #endregion
 
 
         #region Constructors and destructors
 
-        /// <summary>
-        /// Create a KalikoImage from a System.Drawing.Image.
-        /// </summary>
+        /// <summary>Create a KalikoImage from a System.Drawing.Image.</summary>
         /// <param name="image"></param>
         public KalikoImage(Image image) {
-            _image = image;
-            _g = Graphics.FromImage(_image);
+            TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            Image = image;
+            _g = Graphics.FromImage(Image);
         }
 
-        /// <summary>
-        /// Create a KalikoImage with a defined width and height.
-        /// </summary>
+        /// <summary>Create a KalikoImage with a defined width and height.</summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public KalikoImage(int width, int height) {
-            CreateImage(width, height);
-        }
-
-        /// <summary>
-        /// Create a KalikoImage with a defined width, height and backgroundcolor.
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="bgcolor"></param>
-        public KalikoImage(int width, int height, Color bgcolor) {
-            _backgroundColor = bgcolor;
-            CreateImage(width, height);
-            Clear(bgcolor);
-        }
-
-        /// <summary>
-        /// Create a KalikoImage by loading an image from either local disk or web.
-        /// </summary>
         /// <example>
-        /// Open a local image:
-        ///     KalikoImage image = new KalikoImage("c:\\images\\test.jpg");
-        /// 
-        /// Load an image from the web:
-        ///     KalikoImage image = new KalikoImage("http://yourdomain.com/test.jpg");
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Creating a new transparent image
+        /// var image = new KalikoImage(640, 480);</code>
         /// </example>
-        /// <param name="filepath">Local filepath or internet URL</param>
+        public KalikoImage(int width, int height) {
+            TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            CreateImage(width, height);
+        }
+
+        /// <summary>Create a KalikoImage with a defined width and height.</summary>
+        /// <param name="size"></param>
+        public KalikoImage(Size size) : this(size.Width, size.Height) {
+        }
+
+        /// <summary>Create a KalikoImage with a defined width, height and background color.</summary>
+        /// <param name="size"></param>
+        /// <param name="backgroundColor"></param>
+        public KalikoImage(Size size, Color backgroundColor) : this(size.Width, size.Height, backgroundColor) {
+        }
+
+        /// <summary>Create a KalikoImage with a defined width, height and background color.</summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="backgroundColor"></param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Creating a white image
+        /// var image = new KalikoImage(640, 480, Color.White);</code>
+        /// </example>
+        public KalikoImage(int width, int height, Color backgroundColor) : this(width, height) {
+            BackgroundColor = backgroundColor;
+            Clear(backgroundColor);
+        }
+
+        /// <summary>Create a KalikoImage by loading an image from either disk or web URL.</summary>
+        /// <param name="filepath"></param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Open a local image: 
+        /// KalikoImage image = new KalikoImage("c:\\images\\test.jpg"); 
+        ///  
+        /// // Load an image from the web: 
+        /// KalikoImage image = new KalikoImage("http://yourdomain.com/test.jpg");</code>
+        /// </example>
         public KalikoImage(string filepath) {
+            TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             string prefix = filepath.Length > 8 ? filepath.Substring(0, 8).ToLower() : "";
 
-            if(prefix.StartsWith("http://") || prefix.StartsWith("https://")) {
+            if (prefix.StartsWith("http://") || prefix.StartsWith("https://")) {
                 // Load from URL
                 LoadImageFromUrl(filepath);
             }
@@ -114,19 +120,19 @@ namespace Kaliko.ImageLibrary {
             }
         }
 
-        /// <summary>
-        /// Create a KalikoImage from a stream.
-        /// </summary>
+        /// <summary>Create a KalikoImage from a stream.</summary>
         /// <param name="stream"></param>
         public KalikoImage(Stream stream) {
+            TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             LoadImage(stream);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Destroy() {
-            if(_g != null)
-                _g.Dispose();
-            if(_image != null)
-                _image.Dispose();
+            if (_g != null) _g.Dispose();
+            if (Image != null) Image.Dispose();
         }
 
 
@@ -135,77 +141,84 @@ namespace Kaliko.ImageLibrary {
 
         #region Public properties
 
-        public Image Image {
-            get {
-                return _image;
-            }
-            set {
-                _image = value;
-            }
-        }
+        internal Image Image { get; set; }
+        /// <summary>Color used for background.</summary>
+        public Color BackgroundColor { get; set; }
+        /// <summary>Color used for graphical operations such as writing text on image.</summary>
+        public Color Color { get; set; }
+        /// <summary>Rendering mode for text operations.</summary>
+        public TextRenderingHint TextRenderingHint { get; set; }
 
-
+        /// <summary>Image width.</summary>
         public int Width {
             get {
-                return _image.Width;
+                return Image.Width;
             }
         }
 
+        /// <summary>Image height.</summary>
         public int Height {
             get {
-                return _image.Height;
+                return Image.Height;
             }
         }
 
-
-        public Color BackgroundColor {
-            get {
-                return _backgroundColor;
-            }
-            set {
-                _backgroundColor = value;
-            }
-        }
-
-
+        /// <summary>Size of the image</summary>
         public Size Size {
             get {
-                return _image.Size;
+                return Image.Size;
             }
         }
 
 
-        public Color Color {
+
+        /// <summary>
+        /// Check if the current image has an indexed palette.
+        /// </summary>
+        public bool IndexedPalette {
             get {
-                return _color;
-            }
-            set {
-                _color = value;
-            }
-        }
-
-
-        public TextRenderingHint TextRenderingHint {
-            get {
-                return _textrenderinghint;
-            }
-            set {
-                _textrenderinghint = value;
+                switch (Image.PixelFormat) {
+                    case PixelFormat.Undefined:
+                    case PixelFormat.Format1bppIndexed:
+                    case PixelFormat.Format4bppIndexed:
+                    case PixelFormat.Format8bppIndexed:
+                    case PixelFormat.Format16bppGrayScale:
+                    case PixelFormat.Format16bppArgb1555:
+                        return true;
+                    default:
+                        return false;
+                }
             }
         }
 
+        /// <summary>Returns true if image has portrait ratio (higher than wide).</summary>
         public bool IsPortrait {
-            get { return Width < Height; }
+            get {
+                return Width < Height;
+            }
         }
 
+        /// <summary>Returns true if image has landscape ratio (wider than high).</summary>
         public bool IsLandscape {
-            get { return Width > Height; }
+            get {
+                return Width > Height;
+            }
         }
 
+        /// <summary>Returns true if image has a 1:1 ratio (same width and height).</summary>
         public bool IsSquare {
-            get { return Width == Height; }
+            get {
+                return Width == Height;
+            }
         }
 
+
+        /// <summary>Width/height ratio of image.</summary>
+        public double ImageRatio {
+            get {
+                return (double)Width / Height;
+            }
+        }
 
         #endregion
 
@@ -213,31 +226,24 @@ namespace Kaliko.ImageLibrary {
         #region Common image functions
 
         /// <summary>
-        /// Create an exact copy of this Kaliko.ImageLibrary.KalikoImage
+        /// Create a new image as a clone.
         /// </summary>
         /// <returns></returns>
         public KalikoImage Clone() {
-            // Create new image from the old one
-            KalikoImage newImage = new KalikoImage(_image);
-            
-            // Set all private variables to same as the current instance
-            newImage._color = _color;
-            newImage._font = _font;
-            newImage._backgroundColor = _backgroundColor;
-            newImage._textrenderinghint = _textrenderinghint;
+            var newImage = new KalikoImage(Image) {
+                Color = Color, 
+                _font = _font, 
+                BackgroundColor = BackgroundColor, 
+                TextRenderingHint = TextRenderingHint
+            };
 
             return newImage;
         }
 
-        /// <summary>
-        /// Instanciate an empty image of the requested resolution.
-        /// </summary>
-        /// <param name="width">Width of the new image</param>
-        /// <param name="height">Height of the new image</param>
         private void CreateImage(int width, int height) {
-            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-            _image = bitmap;
-            _g = Graphics.FromImage(_image);
+            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            Image = bitmap;
+            _g = Graphics.FromImage(Image);
         }
 
         #endregion
@@ -245,35 +251,59 @@ namespace Kaliko.ImageLibrary {
 
         #region Functions for text
 
-        /// <summary>
-        /// Load a font for further use.
-        /// </summary>
-        /// <param name="fileName">Path to font file</param>
-        /// <param name="size">Font size</param>
-        /// <param name="fontStyle">Font style</param>
-        /// <example>
-        /// KalikoImage image = new KalikoImage(200, 200);
-        /// image.SetFont("c:\\fontpath\\arial.ttf", 12f, FontStyle.Regular);
-        /// image.WriteText("Hello world!", 0, 10);
-        /// </example>
+        /// <summary>Set the font that will be used for text operations.</summary>
+        /// <param name="fileName"></param>
+        /// <param name="size"></param>
+        /// <param name="fontStyle"></param>
         public void SetFont(string fileName, float size, FontStyle fontStyle) {
-            PrivateFontCollection pf = new PrivateFontCollection();
+            var pf = new PrivateFontCollection();
             pf.AddFontFile(fileName);
             _font = new Font(pf.Families[0], size, fontStyle);
         }
 
 
-        public void WriteText(string txt, int x, int y) {
-            _g.TextRenderingHint = _textrenderinghint;
-            _g.DrawString(txt, _font, new SolidBrush(_color), new Point(x, y));
+        /// <summary>Write text to image using the font assigned using <see cref="SetFont">SetFont Method</see>.</summary>
+        /// <param name="text">Text that will be written on image</param>
+        /// <param name="x">Left-most position of the text</param>
+        /// <param name="y">Top-most position of the text</param>
+        /// <seealso cref="M:Kaliko.ImageLibrary.KalikoImage.SetFont(System.String,System.Single,System.Drawing.FontStyle)"></seealso>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Write Hello World on image with semi transparent white
+        /// var image = new KalikoImage(@"C:\Img\MyImage.jpg");
+        ///  
+        /// // Load the font, relative path from the application path
+        /// image.SetFont("84_rock.ttf", 120, FontStyle.Regular);
+        /// image.Color = Color.FromArgb(64, Color.White);
+        /// image.WriteText("Hello World!", 0, 0);</code>
+        /// </example>
+        public void WriteText(string text, int x, int y) {
+            _g.TextRenderingHint = TextRenderingHint;
+            _g.DrawString(text, _font, new SolidBrush(Color), new Point(x, y));
         }
 
 
-        public void WriteText(string txt, int x, int y, float angle) {
-            _g.TextRenderingHint = _textrenderinghint;
+        /// <summary>Write text to image using the font assigned using <see cref="SetFont">SetFont Method</see> rotated in the defined angle.</summary>
+        /// <param name="text">Text that will be written on image</param>
+        /// <param name="x">Left-most position of the text</param>
+        /// <param name="y">Top-most position of the text</param>
+        /// <param name="angle">Angle to rotate the text to</param>
+        /// <seealso cref="M:Kaliko.ImageLibrary.KalikoImage.SetFont(System.String,System.Single,System.Drawing.FontStyle)"></seealso>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Write Hello World on image with semi transparent white
+        /// var image = new KalikoImage(@"C:\Img\MyImage.jpg");
+        ///  
+        /// // Load the font, relative path from the application path
+        /// image.SetFont("84_rock.ttf", 120, FontStyle.Regular);
+        /// image.Color = Color.FromArgb(64, Color.White);
+        /// image.WriteText("Hello World!", 100, 100, 45);</code>
+        /// </example>
+        public void WriteText(string text, int x, int y, float angle) {
+            _g.TextRenderingHint = TextRenderingHint;
             _g.TranslateTransform(x, y);
             _g.RotateTransform(angle);
-            _g.DrawString(txt, _font, new SolidBrush(_color), new Point(0, 0));
+            _g.DrawString(text, _font, new SolidBrush(Color), new Point(0, 0));
             _g.ResetTransform();
         }
 
@@ -287,13 +317,11 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="fileName">File path</param>
         public void LoadImage(string fileName) {
-            _image = Image.FromFile(fileName);
+            Image = Image.FromFile(fileName);
 
-            if (DoesImageNeedToBeConverted) {
-                ConvertImageToTrueColor();
-            }
+            MakeImageNonIndexed();
 
-            _g = Graphics.FromImage(_image);
+            _g = Graphics.FromImage(Image);
         }
 
         /// <summary>
@@ -301,13 +329,11 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="stream">Pointer to stream</param>
         public void LoadImage(Stream stream) {
-            _image = Image.FromStream(stream);
+            Image = Image.FromStream(stream);
 
-            if (DoesImageNeedToBeConverted) {
-                ConvertImageToTrueColor();
-            }
+            MakeImageNonIndexed();
 
-            _g = Graphics.FromImage(_image);
+            _g = Graphics.FromImage(Image);
         }
 
         /// <summary>
@@ -315,46 +341,34 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="url"></param>
         public void LoadImageFromUrl(string url) {
-            WebRequest request = WebRequest.Create(url);
+            var request = WebRequest.Create(url);
             request.Credentials = CredentialCache.DefaultCredentials;
 
-            Stream source = request.GetResponse().GetResponseStream();
-            MemoryStream ms = new MemoryStream();
+            var source = request.GetResponse().GetResponseStream();
+            var ms = new MemoryStream();
 
-            byte[] data = new byte[256];
+            var data = new byte[256];
             int c = source.Read(data, 0, data.Length);
 
-            while(c > 0) {
+            while (c > 0) {
                 ms.Write(data, 0, c);
                 c = source.Read(data, 0, data.Length);
             }
 
             source.Close();
             ms.Position = 0;
-            
+
             LoadImage(ms);
 
             ms.Close();
         }
 
-        private void ConvertImageToTrueColor() {
-            using (_image) {
-                using (Bitmap bitmap = new Bitmap(_image)) {
-                    _image = new Bitmap(bitmap);
-                }
-            }
-        }
-
-        protected bool DoesImageNeedToBeConverted {
-            get {
-                switch (_image.PixelFormat) {
-                    case PixelFormat.Format24bppRgb:
-                    case PixelFormat.Format32bppArgb:
-                    case PixelFormat.Format32bppPArgb:
-                        return false;
-                    default:
-                        return true;
-                }
+        /// <summary>
+        /// Check if image has an indexed palette and if so convert to truecolor
+        /// </summary>
+        private void MakeImageNonIndexed() {
+            if (IndexedPalette) {
+                Image = new Bitmap(new Bitmap(Image));
             }
         }
 
@@ -363,19 +377,29 @@ namespace Kaliko.ImageLibrary {
 
         #region Primitive drawing functions like clear, fill etc
 
+        /// <summary>Clear the image and set background image to the specified color.</summary>
+        /// <param name="color"></param>
         public void Clear(Color color) {
             _g.Clear(color);
         }
 
 
+        /// <summary>Makes a gradient fill top to bottom from one color to another.</summary>
+        /// <param name="colorFrom"></param>
+        /// <param name="colorTo"></param>
         public void GradientFill(Color colorFrom, Color colorTo) {
-            GradientFill(new Point(0, 0), new Point(0, _image.Height), colorFrom, colorTo);
+            GradientFill(new Point(0, 0), new Point(0, Image.Height), colorFrom, colorTo);
         }
 
 
+        /// <summary>Makes a gradient fill from point 1 to point 2 from one color to another.</summary>
+        /// <param name="pointFrom"></param>
+        /// <param name="pointTo"></param>
+        /// <param name="colorFrom"></param>
+        /// <param name="colorTo"></param>
         public void GradientFill(Point pointFrom, Point pointTo, Color colorFrom, Color colorTo) {
             Brush brush = new LinearGradientBrush(pointFrom, pointTo, colorFrom, colorTo);
-            _g.FillRectangle(brush, 0, 0, _image.Width, _image.Height);
+            _g.FillRectangle(brush, 0, 0, Image.Width, Image.Height);
         }
 
         #endregion
@@ -383,77 +407,73 @@ namespace Kaliko.ImageLibrary {
 
         #region Functions for thumbnail creation
 
-        public KalikoImage GetThumbnailImage(int width, int height) {
-            return GetThumbnailImage(width, height, ThumbnailMethod.Crop);
+        /// <summary>Scale the image using a defined scaling engine which can be <see cref="Scaling.CropScaling">CropScaling Class</see> will crop the image so that the final result always
+        /// has the given dimension, <see cref="Scaling.FitScaling">FitScaling Class</see> will ensure that the complete image is visible inside the given
+        /// dimension or <see cref="Scaling.PadScaling">PadScaling Class</see> that will pad the image so that it cover the given dimension.</summary>
+        /// <param name="scaleEngine"></param>
+        /// <returns></returns>
+        /// <seealso cref="Scaling.CropScaling"></seealso>
+        /// <seealso cref="Scaling.FitScaling"></seealso>
+        /// <seealso cref="Scaling.PadScaling"></seealso>
+        public KalikoImage Scale(ScalingBase scaleEngine) {
+            var resizedImage = scaleEngine.Scale(this);
+            return resizedImage;
         }
 
 
-        public KalikoImage GetThumbnailImage(int width, int height, ThumbnailMethod method) {
-            KalikoImage image;
-            double imageRatio = (double)_image.Width / _image.Height;
-            double thumbRatio = (double)width / height;
 
-            if(method == ThumbnailMethod.Crop ) {
-                int imgWidth = width;
-                int imgHeight = height;
-
-                if(imageRatio < thumbRatio) {
-                    imgHeight = (_image.Height * width) / _image.Width;
-                }
-                else {
-                    imgWidth = (_image.Width * height) / _image.Height;
-                }
-
-                image = new KalikoImage(width, height);
-                DrawScaledImage(image._image, _image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
-            }
-            else if(method == ThumbnailMethod.Pad) {
-                // Rewritten to fix issue #1. Thanks to Cosmin!
-                float hRatio = _image.Height / (float)height;
-                float wRatio = _image.Width / (float)width;
-                float newRatio = hRatio > wRatio ? hRatio : wRatio;
-                int imgHeight = (int)(_image.Height / newRatio);
-                int imgWidth = (int)(_image.Width / newRatio);
-
-                image = new KalikoImage(width, height, _backgroundColor);
-                DrawScaledImage(image._image, _image, (width - imgWidth) / 2, (height - imgHeight) / 2, imgWidth, imgHeight);
-            }
-            else { // ThumbnailMethod.Fit
-                if(imageRatio < thumbRatio) {
-                    width = (_image.Width * height) / _image.Height;
-                }
-                else {
-                    height = (_image.Height * width) / _image.Width;
-                }
-
-                image = new KalikoImage(width, height);
-                DrawScaledImage(image._image, _image, 0, 0, width, height);
-            }
-
-            return image;
+        internal static void DrawScaledImage(
+            KalikoImage destinationImage, KalikoImage sourceImage, int x, int y, int width, int height) {
+            DrawScaledImage(destinationImage.Image, sourceImage.Image, x, y, width, height);
         }
 
         private static void DrawScaledImage(Image destImage, Image sourceImage, int x, int y, int width, int height) {
-            using(Graphics g = Graphics.FromImage(destImage)) {
+            using (Graphics g = Graphics.FromImage(destImage)) {
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                using (ImageAttributes wrapMode = new ImageAttributes()) {
+                using (var wrapMode = new ImageAttributes()) {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    g.DrawImage(sourceImage, new Rectangle(x, y, width, height), 0, 0, sourceImage.Width, sourceImage.Height, GraphicsUnit.Pixel, wrapMode);
+                    g.DrawImage(
+                        sourceImage,
+                        new Rectangle(x, y, width, height),
+                        0,
+                        0,
+                        sourceImage.Width,
+                        sourceImage.Height,
+                        GraphicsUnit.Pixel,
+                        wrapMode);
                 }
             }
         }
+
+
 
         #endregion
 
 
         #region Functions for blitting
 
+        /// <summary>Will load an image and place it on the destination image at top left corner.</summary>
+        /// <param name="fileName"></param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Load image and place on top, left of our image
+        /// image.BlitImage(@"C:\Img\Stamp.png");</code>
+        /// </example>
         public void BlitImage(string fileName) {
             BlitImage(fileName, 0, 0);
         }
 
 
+        /// <summary>Will load an image and place it on the destination image at the defined coordinates.</summary>
+        /// <param name="fileName"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Load image and place 10 pixels from the left and 20 pixels from the top
+        /// image.BlitImage(@"C:\Img\Stamp.png", 10, 20);</code>
+        /// </example>
         public void BlitImage(string fileName, int x, int y) {
             Image mark = Image.FromFile(fileName);
             BlitImage(mark, x, y);
@@ -461,27 +481,59 @@ namespace Kaliko.ImageLibrary {
         }
 
 
+        /// <summary>Will take the source image and place it on the destination image at top left corner.</summary>
+        /// <param name="image"></param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Place the source image on top, left of our image
+        /// var sourceImage = new KalikoImage(@"C:\Img\Stamp.png");
+        /// image.BlitImage(sourceImage);</code>
+        /// </example>
         public void BlitImage(KalikoImage image) {
-            BlitImage(image._image, 0, 0);
+            BlitImage(image.Image, 0, 0);
         }
 
 
+        /// <summary>Will take the source image and place it on the destination image at the defined coordinates.</summary>
+        /// <param name="image"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Place the source image 10 pixels from the left and 20 pixels from the top
+        /// var sourceImage = new KalikoImage(@"C:\Img\Stamp.png");
+        /// image.BlitImage(sourceImage, 10, 20);</code>
+        /// </example>
         public void BlitImage(KalikoImage image, int x, int y) {
-            BlitImage(image._image, x, y);
+            BlitImage(image.Image, x, y);
         }
 
 
+        /// <summary>Will take the source image and place it on the destination image at top left corner.</summary>
+        /// <param name="image"></param>
         public void BlitImage(Image image) {
             BlitImage(image, 0, 0);
         }
 
 
+        /// <summary>Will take the source image and place it on the destination image at the defined coordinates.</summary>
+        /// <param name="image"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void BlitImage(Image image, int x, int y) {
             _g.DrawImageUnscaled(image, x, y);
         }
 
 
 
+        /// <summary>Loads the defined image and use it as a pattern to fill the image (will be tiled if the destination image is larger than the source image).</summary>
+        /// <param name="fileName"></param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Repeat the above, but in a just one additional call
+        /// var image = new KalikoImage(640, 480);
+        /// image.BlitFill(@"C:\Img\Checkered.png");</code>
+        /// </example>
         public void BlitFill(string fileName) {
             Image mark = Image.FromFile(fileName);
             BlitFill(mark);
@@ -489,120 +541,228 @@ namespace Kaliko.ImageLibrary {
         }
 
 
+        /// <summary>Uses the defined image as a pattern to fill the image (will be tiled if the destination image is larger than the source image)..</summary>
+        /// <param name="image"></param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Create a new image and fill the source image all over
+        /// var image = new KalikoImage(640, 480);
+        /// var patternImage = new KalikoImage(@"C:\Img\Checkered.png");
+        /// image.BlitFill(patternImage);</code>
+        /// </example>
         public void BlitFill(KalikoImage image) {
-            BlitFill(image._image);
+            BlitFill(image.Image);
         }
 
 
+        /// <summary>Uses the defined image as a pattern to fill the image (will be tiled if the destination image is larger than the source image)..</summary>
+        /// <param name="image"></param>
         public void BlitFill(Image image) {
             int width = image.Width;
             int height = image.Height;
-            int columns = (int)Math.Ceiling((float)_image.Width / width);
-            int rows = (int)Math.Ceiling((float)_image.Width / width);
+            var columns = (int)Math.Ceiling((float)Image.Width / width);
+            var rows = (int)Math.Ceiling((float)Image.Width / width);
 
-            for(int y = 0;y < rows;y++) {
-                for(int x = 0;x < columns;x++) {
+            for (int y = 0; y < rows; y++) {
+                for (int x = 0; x < columns; x++) {
                     _g.DrawImageUnscaled(image, x * width, y * height);
                 }
             }
         }
 
+
+        /// <summary>Crop the image into the given dimensions.</summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public void Crop(int x, int y, int width, int height) {
+            var image = new KalikoImage(width, height);
+            image.BlitImage(Image, -x, -y);
+
+            Image = image.Image;
+        }
+
+
+        /// <summary>Resizes the image without any <span lang="en" id="result_box" class="short_text" xml:lang="en"><span class="hps alt-edited">consideration of the current
+        /// ratio. If you wish to make a ratio locked resize use <see cref="Scale">Scale Method</see> instead.</span></span></summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <seealso cref="M:Kaliko.ImageLibrary.KalikoImage.Scale(Kaliko.ImageLibrary.Scaling.ScalingBase)"></seealso>
+        public void Resize(int width, int height) {
+            int newWidth = width;
+            int newHeight = height;
+
+            if (newWidth == 0 && newHeight == 0) {
+                return;
+            }
+
+            if (newWidth == 0) {
+                newWidth = Image.Width * newHeight / Image.Height;
+            }
+            else if (newHeight == 0) {
+                newHeight = Image.Height * newWidth / Image.Width;
+            }
+
+            var image = new KalikoImage(newWidth, newHeight);
+            DrawScaledImage(image.Image, Image, 0, 0, newWidth, newHeight);
+
+            Image = image.Image;
+        }
+
+		
         #endregion
 
 
         #region Functions for image saving and streaming
 
-        private static ImageCodecInfo GetEncoderInfo(String mimeType) {
-            ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
-
-            for(int j = 0, l = encoders.Length;j < l;++j) {
-                if(encoders[j].MimeType == mimeType) {
-                    return encoders[j];
-                }
-            }
-            return null;
-        }
 
 
+
+        /// <summary>Save image to the response stream in JPG-format. Ideal for sending realtime generated images to the web client requesting it.</summary>
+        /// <param name="quality"></param>
+        /// <param name="fileName"></param>
+        /// <remarks>This method will set the proper HTTP-headers such as filename and mime-type.</remarks>
         public void StreamJpg(long quality, string fileName) {
-            SaveJpg(PrepareImageStream(fileName, "image/jpeg"), quality);
+            var imageStream = ImageOutput.PrepareImageStream(fileName, "image/jpeg");
+            SaveJpg(imageStream, quality);
         }
 
 
+        /// <summary>
+        /// Save image to the response stream in PNG-format. Ideal for sending realtime generated images to the web client requesting it.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <remarks>This method will set the proper HTTP-headers such as filename and mime-type.</remarks>
+        public void StreamPng(string fileName) {
+            var imageStream = ImageOutput.PrepareImageStream(fileName, "image/png");
+            SavePng(imageStream);
+        }
+
+        /// <summary>Save image to the response stream in GIF-format. Ideal for sending realtime generated images to the web client requesting it.</summary>
+        /// <param name="fileName"></param>
+        /// <remarks>This method will set the proper HTTP-headers such as filename and mime-type.</remarks>
         public void StreamGif(string fileName) {
-            SaveGif(PrepareImageStream(fileName, "image/gif"));
+            var imageStream = ImageOutput.PrepareImageStream(fileName, "image/gif");
+            SaveGif(imageStream);
         }
 
 
-        private static Stream PrepareImageStream(string fileName, string mime) {
-            System.Web.HttpResponse stream = System.Web.HttpContext.Current.Response;
-            stream.Clear();
-            stream.ClearContent();
-            stream.ClearHeaders();
-            stream.ContentType = mime;
-            stream.AddHeader("Content-Disposition", "inline;filename=" + fileName);
-            return stream.OutputStream;
-        }
-
+        /// <summary></summary>
+        /// <param name="stream">Stream to save the image to</param>
+        /// <param name="quality">Compression quality setting (0-100)</param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Save image to stream in jpg format with quality setting 90
+        /// MemoryStream memoryStream = new MemoryStream();
+        /// image.SaveJpg(memoryStream, 90);</code>
+        /// </example>
         public void SaveJpg(Stream stream, long quality) {
-            EncoderParameters encparam = new EncoderParameters(1);
-            encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-            ImageCodecInfo ic = GetEncoderInfo("image/jpeg");
-            _image.Save(stream, ic, encparam);
+            ImageOutput.SaveStream(Image, stream, quality, "image/jpeg");
         }
 
 
+        /// <summary>Save image to file in JPG-format.</summary>
+        /// <param name="fileName">Name of the file</param>
+        /// <param name="quality">Compression quality setting (0-100)</param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Save image to file system in jpg format with quality setting 90
+        /// image.SaveJpg(@"C:\MyImages\Output.jpg", 90);</code>
+        /// </example>
         public void SaveJpg(string fileName, long quality) {
-            EncoderParameters encparam = new EncoderParameters(1);
-            encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-            ImageCodecInfo ic = GetEncoderInfo("image/jpeg");
-            _image.Save(fileName, ic, encparam);
+            ImageOutput.SaveFile(Image, fileName, quality, "image/jpeg");
         }
 
 
+        /// <summary></summary>
+        /// <exclude/>
+        /// <excludetoc/>
+        /// <param name="stream"></param>
+        /// <param name="quality"></param>
+        [Obsolete("SavePng(Stream stream, long quality) is deprecated, use SavePng(Stream stream) instead.")]
         public void SavePng(Stream stream, long quality) {
-            EncoderParameters encparam = new EncoderParameters(1);
-            encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-            ImageCodecInfo ic = GetEncoderInfo("image/png");
-            _image.Save(stream, ic, encparam);
+            ImageOutput.SaveStream(Image, stream, quality, "image/png");
         }
 
-        
+
+        /// <summary></summary>
+        /// <exclude/>
+        /// <excludetoc/>
+        /// <param name="fileName"></param>
+        /// <param name="quality"></param>
+        [Obsolete("SavePng(string fileName, long quality) is deprecated, use SavePng(string fileName) instead.")]
         public void SavePng(string fileName, long quality) {
-            EncoderParameters encparam = new EncoderParameters(1);
-            encparam.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-            ImageCodecInfo ic = GetEncoderInfo("image/png");
-            _image.Save(fileName, ic, encparam);
+            ImageOutput.SaveFile(Image, fileName, quality, "image/png");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        public void SavePng(Stream stream) {
+            Image.Save(stream, ImageFormat.Png);
+        }
+
+        /// <summary>Save image to file in PNG-format.</summary>
+        /// <param name="fileName"></param>
+        public void SavePng(string fileName) {
+            Image.Save(fileName, ImageFormat.Png);
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         public void SaveGif(Stream stream) {
-            _image.Save(stream, ImageFormat.Gif);
+            Image.Save(stream, ImageFormat.Gif);
         }
 
 
+        /// <summary>Save image to file in GIF-format.</summary>
+        /// <param name="fileName"></param>
         public void SaveGif(string fileName) {
-            _image.Save(fileName, ImageFormat.Gif);
+            Image.Save(fileName, ImageFormat.Gif);
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         public void SaveBmp(Stream stream) {
-            _image.Save(stream, ImageFormat.Bmp);
+            Image.Save(stream, ImageFormat.Bmp);
         }
 
 
+        /// <summary>Save image to file in BMP-format.</summary>
+        /// <param name="fileName"></param>
         public void SaveBmp(string fileName) {
-            _image.Save(fileName, ImageFormat.Bmp);
+            Image.Save(fileName, ImageFormat.Bmp);
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="format"></param>
         public void SaveBmp(Stream stream, ImageFormat format) {
-            _image.Save(stream, format);
+            Image.Save(stream, format);
         }
 
 
+        /// <summary>Generic method that will save the image in the specified ImageFormat.</summary>
+        /// <param name="fileName"></param>
+        /// <param name="format">Image format to save the file in, for example ImageFormat.Tiff</param>
+        /// <example>
+        /// 	<code title="Example" description="" lang="CS">
+        /// // Save image to file system in the selected format
+        /// image.SaveImage(@"C:\MyImages\Output.tif", ImageFormat.Tiff);</code>
+        /// </example>
         public void SaveImage(string fileName, ImageFormat format) {
-            _image.Save(fileName, format);
+            Image.Save(fileName, format);
         }
 
 
@@ -614,66 +774,93 @@ namespace Kaliko.ImageLibrary {
         private byte[] _byteArray;
         private bool _disposed;
 
-        /// <summary>
-        /// ByteArray matching PixelFormat.Format32bppArgb (bgrA in real life)
-        /// </summary>
+
+        /// <summary>Byte array matching PixelFormat.Format32bppArgb (bgrA in real life).</summary>
         public byte[] ByteArray {
             get {
-                if(_byteArray == null) {
-                    BitmapData data = ((Bitmap)_image).LockBits(new Rectangle(0, 0, _image.Width, _image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                    int length = _image.Width * _image.Height * 4;
+                if (_byteArray == null) {
+                    BitmapData data = ((Bitmap)Image).LockBits(
+                        new Rectangle(0, 0, Image.Width, Image.Height),
+                        ImageLockMode.ReadOnly,
+                        PixelFormat.Format32bppArgb);
+                    int length = Image.Width * Image.Height * 4;
                     _byteArray = new byte[length];
 
-                    if(data.Stride == _image.Width * 4) {
+                    if (data.Stride == Image.Width * 4) {
                         Marshal.Copy(data.Scan0, _byteArray, 0, length);
                     }
                     else {
-                        for(int i = 0, l = _image.Height;i < l;i++) {
-                            IntPtr p = new IntPtr(data.Scan0.ToInt32() + data.Stride * i);
-                            Marshal.Copy(p, _byteArray, i * _image.Width * 4, _image.Width * 4);
+                        for (int i = 0, l = Image.Height; i < l; i++) {
+                            var p = new IntPtr(data.Scan0.ToInt32() + data.Stride * i);
+                            Marshal.Copy(p, _byteArray, i * Image.Width * 4, Image.Width * 4);
                         }
                     }
 
-                    ((Bitmap)_image).UnlockBits(data);
+                    ((Bitmap)Image).UnlockBits(data);
                 }
                 return _byteArray;
             }
             set {
-                BitmapData data = ((Bitmap)_image).LockBits(new Rectangle(0, 0, _image.Width, _image.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-
-                if(data.Stride == _image.Width * 4) {
+                Image = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
+                BitmapData data = ((Bitmap)Image).LockBits(new Rectangle(0, 0, Image.Width, Image.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                
+                if (data.Stride == Image.Width * 4) {
                     Marshal.Copy(value, 0, data.Scan0, value.Length);
                 }
                 else {
-                    for(int i = 0, l = _image.Height;i < l;i++) {
-                        IntPtr p = new IntPtr(data.Scan0.ToInt32() + data.Stride * i);
-                        Marshal.Copy(value, i * _image.Width * 4, p, _image.Width * 4);
+                    for (int i = 0, l = Image.Height; i < l; i++) {
+                        var p = new IntPtr(data.Scan0.ToInt32() + data.Stride * i);
+                        Marshal.Copy(value, i * Image.Width * 4, p, Image.Width * 4);
                     }
                 }
 
-                ((Bitmap)_image).UnlockBits(data);
+                ((Bitmap)Image).UnlockBits(data);
             }
         }
 
 
 
+        /// <summary>Apply a filter to the current Image.</summary>
+        /// <param name="filter">Any filter that supports the <see cref="Filters.IFilter">IFilter</see> interface</param>
+        /// <seealso cref="Kaliko.ImageLibrary.Filters"></seealso>
         public void ApplyFilter(Filters.IFilter filter) {
             filter.Run(this);
         }
 
         #endregion
 
+        /// <summary>Int array matching PixelFormat.Format32bppArgb (bgrA in real life)</summary>
+        public int[] IntArray {
+            get {
+                var intArray = new int[ByteArray.Length / 4];
+
+                for (int i = 0; i < ByteArray.Length; i += 4) {
+                    intArray[i/4] = BitConverter.ToInt32(ByteArray, i);
+                }
+
+                return intArray;
+            }
+            set {
+                var byteArray = new byte[value.Length * 4];
+
+                for (int i = 0; i < value.Length; i++) {
+                    Array.Copy(BitConverter.GetBytes(value[i]), 0, byteArray, i * 4, 4);
+                }
+                ByteArray = byteArray;
+            }
+        }
+		
         protected virtual void Dispose(bool disposing) {
             if (!_disposed) {
                 if (disposing) {
-                    if(_font != null) {
+                    if (_font != null) {
                         _font.Dispose();
                     }
-                    if(_g != null) {
+                    if (_g != null) {
                         _g.Dispose();
                     }
-                    if(_image != null) {
-                        _image.Dispose();
+                    if (Image != null) {
+                        Image.Dispose();
                     }
                 }
 
@@ -685,11 +872,45 @@ namespace Kaliko.ImageLibrary {
             Dispose(false);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+
+        #region Deprecated methods only kept for legacy
+
+        /// <exclude/>
+        /// <excludetoc/>
+        [Obsolete("GetThumbnailImage method is deprecated, use Scale(ScalingBase scaleEngine) instead.")]
+        public KalikoImage GetThumbnailImage(int width, int height) {
+            return GetThumbnailImage(width, height, ThumbnailMethod.Crop);
+        }
+
+        /// <exclude/>
+        /// <excludetoc/>
+        [Obsolete("GetThumbnailImage method is deprecated, use Scale(ScalingBase scaleEngine) instead.")]
+        public KalikoImage GetThumbnailImage(int width, int height, ThumbnailMethod method) {
+            ScalingBase scaleEngine;
+
+            switch (method) {
+                case ThumbnailMethod.Fit:
+                    scaleEngine = new FitScaling(width, height);
+                    break;
+                case ThumbnailMethod.Pad:
+                    scaleEngine = new PadScaling(width, height);
+                    break;
+                default:
+                    scaleEngine = new CropScaling(width, height);
+                    break;
+            }
+
+            return Scale(scaleEngine);
+        }
+
+        #endregion
     }
 }
-

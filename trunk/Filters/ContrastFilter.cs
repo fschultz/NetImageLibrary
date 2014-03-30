@@ -1,7 +1,8 @@
-﻿/*
+﻿#region License and copyright notice
+/*
  * Kaliko Image Library
  * 
- * Copyright (c) 2009 Fredrik Schultz
+ * Copyright (c) 2014 Fredrik Schultz
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +23,35 @@
  * THE SOFTWARE.
  * 
  */
-
-using System;
+#endregion
 
 namespace Kaliko.ImageLibrary.Filters {
-    public class ContrastFilter : IFilter {
-        private double _contrast;
+    using System;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ContrastFilter : IFilter {
+        private readonly double _contrast;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="changeInContrast"></param>
         public ContrastFilter(int changeInContrast) {
             _contrast = 1 + ((double)changeInContrast / 100);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="image"></param>
         public void Run(KalikoImage image) {
             ChangeContrast(image);
         }
 
         private void ChangeContrast(KalikoImage image) {
-            byte[] precalc = new byte[256];
+            var precalc = new byte[256];
 
             // Precalculate all changes
             for(int i = 0;i < 256;i++) {
