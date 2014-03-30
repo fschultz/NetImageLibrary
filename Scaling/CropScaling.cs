@@ -46,14 +46,19 @@ namespace Kaliko.ImageLibrary.Scaling {
         }
 
         internal override Size CalculateNewImageSize(Size originalSize) {
-            // Thanks to Cosmin for the following fix!
-            var verticalRatio = originalSize.Height / (float)_targetSize.Height;
-            var horizontalRatio = originalSize.Width / (float)_targetSize.Width;
-            var newRatio = verticalRatio > horizontalRatio ? verticalRatio : horizontalRatio;
-            var imageHeight = (int)(originalSize.Height / newRatio);
-            var imageWidth = (int)(originalSize.Width / newRatio);
+            double targetRatio = GetRatio(_targetSize);
+            double originalRatio = GetRatio(originalSize);
 
-            return new Size(imageWidth, imageHeight);
+            var size = new Size(_targetSize.Width, _targetSize.Height);
+
+            if (originalRatio < targetRatio) {
+                size.Height = (originalSize.Height*_targetSize.Width)/originalSize.Width;
+            }
+            else {
+                size.Width = (originalSize.Width*_targetSize.Height)/originalSize.Height;
+            }
+
+            return size;
         }
 
         internal override KalikoImage DrawResizedImage(KalikoImage sourceImage, Size calculatedSize, Size originalSize) {
