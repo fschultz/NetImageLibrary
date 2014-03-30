@@ -1,7 +1,8 @@
+#region License and copyright notice
 /*
  * Kaliko Image Library
  * 
- * Copyright (c) 2009 Fredrik Schultz
+ * Copyright (c) 2014 Fredrik Schultz
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +23,7 @@
  * THE SOFTWARE.
  * 
  */
+#endregion
 
 namespace Kaliko.ImageLibrary.Filters {
     public class InvertFilter : IFilter {

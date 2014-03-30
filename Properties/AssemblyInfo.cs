@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Kaliko Image Library")]
-[assembly: AssemblyDescription("C# library for ease image handling like cropping, thumbnails, streaming and more")]
+[assembly: AssemblyDescription(".NET library for easy image handling like cropping, thumbnails, streaming and more")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Kaliko Entertainment")]
-[assembly: AssemblyProduct("ImageLib")]
-[assembly: AssemblyCopyright("Copyright © Fredrik Schultz and Contributors 2013")]
+[assembly: AssemblyCompany("Kaliko")]
+[assembly: AssemblyProduct("ImageLibrary")]
+[assembly: AssemblyCopyright("Copyright © Fredrik Schultz and Contributors")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.2.5.0")]
-[assembly: AssemblyFileVersion("1.2.5.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]

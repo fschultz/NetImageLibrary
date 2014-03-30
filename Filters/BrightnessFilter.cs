@@ -1,7 +1,8 @@
-﻿/*
+﻿#region License and copyright notice
+/*
  * Kaliko Image Library
  * 
- * Copyright (c) 2009 Fredrik Schultz
+ * Copyright (c) 2014 Fredrik Schultz
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +23,23 @@
  * THE SOFTWARE.
  * 
  */
-
-using System;
+#endregion
 
 namespace Kaliko.ImageLibrary.Filters {
+    using System;
+
+    /// <summary>Simple filter for adjusting brightness in images.</summary>
     public class BrightnessFilter : IFilter {
-        private double _brightness;
+        private readonly double _brightness;
         private byte[] _precalcTable;
 
+        /// <param name="changeInBrightness">The amount of change to be applied to the brightness. Entered as either a positive - to make it brighter - or negative - to make it darker - value (zero
+        /// means no change).</param>
         public BrightnessFilter(int changeInBrightness) {
             _brightness = 1 + ((double)changeInBrightness / 100);
         }
 
+        /// <summary>Execute the filter.</summary>
         public void Run(KalikoImage image) {
             PrecalculateTable();
             ChangeBrightness(image);
@@ -42,7 +48,6 @@ namespace Kaliko.ImageLibrary.Filters {
         private void PrecalculateTable() {
             _precalcTable = new byte[256];
 
-            // Precalculate all changes
             for(int i = 0;i < 256;i++) {
                 int val = (int)Math.Round(i * _brightness);
                 if(val < 0) {
