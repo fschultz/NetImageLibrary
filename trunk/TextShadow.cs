@@ -1,4 +1,4 @@
-﻿#region License and copyright notice
+#region License and copyright notice
 /*
  * Kaliko Image Library
  * 
@@ -26,14 +26,17 @@
 #endregion
 
 namespace Kaliko.ImageLibrary {
-    using System;
+    using System.Drawing;
 
-    /// <exclude/>
-    /// <excludetoc/>
-    [Obsolete("ThumbnailMethod is deprecated, use Scale(ScalingBase scaleEngine) instead.")]
-    public enum ThumbnailMethod {
-        Fit,
-        Pad,
-        Crop
+    public class TextShadow {
+        public float OffsetX { get; set; }
+        public float OffsetY { get; set; }
+        public Color Color { get; set; }
+
+        public TextShadow(Color color, float offsetY, float offsetX) {
+            Color = color;
+            OffsetY = offsetY;
+            OffsetX = offsetX;
+        }
     }
 }

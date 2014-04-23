@@ -138,10 +138,22 @@ namespace Kaliko.ImageLibrary {
 
         #endregion
 
+        #region Internal properties
+
+        internal Image Image { get; set; }
+
+        internal Graphics Graphics {
+            get { return _g; }
+        }
+
+        internal Font Font {
+            get { return _font; }
+        }
+
+        #endregion
 
         #region Public properties
 
-        internal Image Image { get; set; }
         /// <summary>Color used for background.</summary>
         public Color BackgroundColor { get; set; }
         /// <summary>Color used for graphical operations such as writing text on image.</summary>
@@ -169,8 +181,6 @@ namespace Kaliko.ImageLibrary {
                 return Image.Size;
             }
         }
-
-
 
         /// <summary>
         /// Check if the current image has an indexed palette.
@@ -277,7 +287,9 @@ namespace Kaliko.ImageLibrary {
         /// image.Color = Color.FromArgb(64, Color.White);
         /// image.WriteText("Hello World!", 0, 0);</code>
         /// </example>
-        public void WriteText(string text, int x, int y) {
+        [Obsolete("This method is deprecated. Use DrawText(TextField textField)")]
+        public void WriteText(string text, int x, int y)
+        {
             _g.TextRenderingHint = TextRenderingHint;
             _g.DrawString(text, _font, new SolidBrush(Color), new Point(x, y));
         }
@@ -299,12 +311,17 @@ namespace Kaliko.ImageLibrary {
         /// image.Color = Color.FromArgb(64, Color.White);
         /// image.WriteText("Hello World!", 100, 100, 45);</code>
         /// </example>
+        [Obsolete("This method is deprecated. Use DrawText(TextField textField)")]
         public void WriteText(string text, int x, int y, float angle) {
             _g.TextRenderingHint = TextRenderingHint;
             _g.TranslateTransform(x, y);
             _g.RotateTransform(angle);
             _g.DrawString(text, _font, new SolidBrush(Color), new Point(0, 0));
             _g.ResetTransform();
+        }
+
+        public void DrawText(TextField textField) {
+            textField.Draw(this);
         }
 
         #endregion
@@ -849,7 +866,7 @@ namespace Kaliko.ImageLibrary {
                 ByteArray = byteArray;
             }
         }
-		
+
         protected virtual void Dispose(bool disposing) {
             if (!_disposed) {
                 if (disposing) {
