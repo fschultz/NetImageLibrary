@@ -72,6 +72,8 @@
     <Compile Include="Scaling\FitScaling.cs" />
     <Compile Include="Scaling\PadScaling.cs" />
     <Compile Include="Scaling\ScalingBase.cs" />
+    <Compile Include="TextField.cs" />
+    <Compile Include="TextShadow.cs" />
     <Compile Include="ThumbnailMethod.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
