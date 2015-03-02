@@ -334,9 +334,12 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="fileName">File path</param>
         public void LoadImage(string fileName) {
-            Image = Image.FromFile(fileName);
-
-            MakeImageNonIndexed();
+            using (var sourceImage = Image.FromFile(fileName)) {
+                Image = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
+                using (var graphics = Graphics.FromImage(Image)) {
+                    graphics.DrawImageUnscaled(sourceImage, 0, 0);
+                }
+            } 
 
             _g = Graphics.FromImage(Image);
         }
