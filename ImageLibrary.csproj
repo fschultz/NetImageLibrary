@@ -40,6 +40,61 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <DocumentationFile>bin\Release\Kaliko.ImageLibrary.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 2.0|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>..\.build\net20\Kaliko.ImageLibrary.XML</DocumentationFile>
+    <OutputPath>..\.build\net20\</OutputPath>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 3.0|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>..\.build\net30\Kaliko.ImageLibrary.XML</DocumentationFile>
+    <OutputPath>..\.build\net30\</OutputPath>
+    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 3.5|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>..\.build\net35\Kaliko.ImageLibrary.XML</DocumentationFile>
+    <OutputPath>..\.build\net35\</OutputPath>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 4.0|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>..\.build\net40\Kaliko.ImageLibrary.XML</DocumentationFile>
+    <OutputPath>..\.build\net40\</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 4.5|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>..\.build\net45\Kaliko.ImageLibrary.XML</DocumentationFile>
+    <OutputPath>..\.build\net45\</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -59,15 +114,20 @@
     <Compile Include="Filters\ChromaKeyFilter.cs" />
     <Compile Include="Filters\ContrastFilter.cs" />
     <Compile Include="Filters\ConvolveFilter.cs" />
+    <Compile Include="Filters\Curve.cs" />
+    <Compile Include="Filters\CurvesFilter.cs" />
     <Compile Include="Filters\DesaturationFilter.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\InvertFilter.cs" />
     <Compile Include="Filters\Kernel.cs" />
     <Compile Include="Filters\GaussianBlurFilter.cs" />
+    <Compile Include="Filters\PointFilter.cs" />
+    <Compile Include="Filters\TransferFilter.cs" />
     <Compile Include="Filters\UnsharpMaskFilter.cs" />
     <Compile Include="ImageOutput.cs" />
     <Compile Include="KalikoImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\SolutionInfo.cs" />
     <Compile Include="Scaling\CropScaling.cs" />
     <Compile Include="Scaling\FitScaling.cs" />
     <Compile Include="Scaling\PadScaling.cs" />

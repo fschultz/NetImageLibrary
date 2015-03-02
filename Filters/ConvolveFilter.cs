@@ -396,4 +396,129 @@ namespace Kaliko.ImageLibrary.Filters {
             return Math.Abs(r1 - r2) <= tolerance && Math.Abs(g1 - g2) <= tolerance && Math.Abs(b1 - b2) <= tolerance;
         }
     }
+
+    public class ImageMath {
+        /**
+ * Clamp a value to an interval.
+ * @param a the lower clamp threshold
+ * @param b the upper clamp threshold
+ * @param x the input parameter
+ * @return the clamped value
+ */
+
+        public static float Clamp(float x, float a, float b) {
+            return (x < a) ? a : (x > b) ? b : x;
+        }
+
+        /**
+         * Clamp a value to an interval.
+         * @param a the lower clamp threshold
+         * @param b the upper clamp threshold
+         * @param x the input parameter
+         * @return the clamped value
+         */
+
+        public static int Clamp(int x, int a, int b) {
+            return (x < a) ? a : (x > b) ? b : x;
+        }
+
+
+
+        // Catmull-Rom splines
+        private static float m00 = -0.5f;
+        private static float m01 = 1.5f;
+        private static float m02 = -1.5f;
+        private static float m03 = 0.5f;
+        private static float m10 = 1.0f;
+        private static float m11 = -2.5f;
+        private static float m12 = 2.0f;
+        private static float m13 = -0.5f;
+        private static float m20 = -0.5f;
+        private static float m21 = 0.0f;
+        private static float m22 = 0.5f;
+        private static float m23 = 0.0f;
+        private static float m30 = 0.0f;
+        private static float m31 = 1.0f;
+        private static float m32 = 0.0f;
+        private static float m33 = 0.0f;
+
+        /**
+	 * Compute a Catmull-Rom spline.
+	 * @param x the input parameter
+	 * @param numKnots the number of knots in the spline
+	 * @param knots the array of knots
+	 * @return the spline value
+	 */
+
+        public static float spline(float x, int numKnots, float[] knots) {
+            int span;
+            int numSpans = numKnots - 3;
+            float k0, k1, k2, k3;
+            float c0, c1, c2, c3;
+
+            if (numSpans < 1)
+                throw new ArgumentException("Too few knots in spline");
+
+            x = Clamp(x, 0, 1)*numSpans;
+            span = (int)x;
+            if (span > numKnots - 4)
+                span = numKnots - 4;
+            x -= span;
+
+            k0 = knots[span];
+            k1 = knots[span + 1];
+            k2 = knots[span + 2];
+            k3 = knots[span + 3];
+
+            c3 = m00*k0 + m01*k1 + m02*k2 + m03*k3;
+            c2 = m10*k0 + m11*k1 + m12*k2 + m13*k3;
+            c1 = m20*k0 + m21*k1 + m22*k2 + m23*k3;
+            c0 = m30*k0 + m31*k1 + m32*k2 + m33*k3;
+
+            return ((c3*x + c2)*x + c1)*x + c0;
+        }
+
+        /**
+	 * Compute a Catmull-Rom spline, but with variable knot spacing.
+	 * @param x the input parameter
+	 * @param numKnots the number of knots in the spline
+	 * @param xknots the array of knot x values
+	 * @param yknots the array of knot y values
+	 * @return the spline value
+	 */
+
+        public static float spline(float x, int numKnots, int[] xknots, int[] yknots) {
+            int span;
+            int numSpans = numKnots - 3;
+            float k0, k1, k2, k3;
+            float c0, c1, c2, c3;
+
+            if (numSpans < 1)
+                throw new ArgumentException("Too few knots in spline");
+
+            for (span = 0; span < numSpans; span++)
+                if (xknots[span + 1] > x)
+                    break;
+            if (span > numKnots - 3)
+                span = numKnots - 3;
+            float t = (float)(x - xknots[span])/(xknots[span + 1] - xknots[span]);
+            span--;
+            if (span < 0) {
+                span = 0;
+                t = 0;
+            }
+
+            k0 = yknots[span];
+            k1 = yknots[span + 1];
+            k2 = yknots[span + 2];
+            k3 = yknots[span + 3];
+
+            c3 = m00*k0 + m01*k1 + m02*k2 + m03*k3;
+            c2 = m10*k0 + m11*k1 + m12*k2 + m13*k3;
+            c1 = m20*k0 + m21*k1 + m22*k2 + m23*k3;
+            c0 = m30*k0 + m31*k1 + m32*k2 + m33*k3;
+
+            return ((c3*t + c2)*t + c1)*t + c0;
+        }
+    }
 }
