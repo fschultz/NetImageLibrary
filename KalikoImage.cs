@@ -55,6 +55,9 @@ namespace Kaliko.ImageLibrary {
         public KalikoImage(Image image) {
             TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             Image = image;
+
+            MakeImageNonIndexed();
+
             _g = Graphics.FromImage(Image);
         }
 
@@ -334,7 +337,9 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="fileName">File path</param>
         public void LoadImage(string fileName) {
-            Image = Image.FromFile(fileName);
+            using (var bitmap = new Bitmap(fileName)) {
+                Image = new Bitmap(bitmap);
+            }
 
             MakeImageNonIndexed();
 
@@ -346,7 +351,9 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="stream">Pointer to stream</param>
         public void LoadImage(Stream stream) {
-            Image = Image.FromStream(stream);
+            using (var bitmap = new Bitmap(stream)) {
+                Image = new Bitmap(bitmap);
+            }
 
             MakeImageNonIndexed();
 
@@ -439,8 +446,7 @@ namespace Kaliko.ImageLibrary {
 
 
 
-        internal static void DrawScaledImage(
-            KalikoImage destinationImage, KalikoImage sourceImage, int x, int y, int width, int height) {
+        internal static void DrawScaledImage(KalikoImage destinationImage, KalikoImage sourceImage, int x, int y, int width, int height) {
             DrawScaledImage(destinationImage.Image, sourceImage.Image, x, y, width, height);
         }
 
