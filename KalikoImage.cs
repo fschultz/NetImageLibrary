@@ -351,7 +351,9 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="stream">Pointer to stream</param>
         public void LoadImage(Stream stream) {
-            Image = Image.FromStream(stream);
+            using (var bitmap = new Bitmap(stream)) {
+                Image = new Bitmap(bitmap);
+            }
 
             MakeImageNonIndexed();
 
