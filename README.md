@@ -25,6 +25,15 @@ Current build contains the following filters:
 If you plan using this library with WPF or simular, read this post on <a href="http://labs.kaliko.com/2011/03/convert-to-bitmapimage.html">how to convert an KalikoImage object to System.Windows.Media.Imaging.BitmapImage and System.Windows.Controls.Image</a>.
 
 ## History
+**2.0.5**
+* Rewritten file loader to prevent file locks
+* Fixed image loading to ignore pixel-per-inch resolutions of original images
+* Fixed constructor using System.Drawing.Image to support indexed palettes
+
+**2.0.4**
+* Added new TextField class for better text support
+* Fixed scaling bug and updated test program 
+
 **2.0.0**
   * Replaced Gaussian blur filter with better implementation (affects unsharpen masks)
   * Added chroma key filter
