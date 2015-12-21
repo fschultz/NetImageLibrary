@@ -54,7 +54,7 @@ namespace Kaliko.ImageLibrary {
         /// <param name="image"></param>
         public KalikoImage(Image image) {
             TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-            Image = image;
+            Image = new Bitmap(image);
 
             MakeImageNonIndexed();
 
