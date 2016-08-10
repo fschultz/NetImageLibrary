@@ -56,6 +56,9 @@ namespace Kaliko.ImageLibrary {
             TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             Image = new Bitmap(image);
 
+            HorizontalResolution = image.HorizontalResolution;
+            VerticalResolution = image.VerticalResolution;
+
             MakeImageNonIndexed();
 
             _g = Graphics.FromImage(Image);
@@ -72,6 +75,8 @@ namespace Kaliko.ImageLibrary {
         public KalikoImage(int width, int height) {
             TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             CreateImage(width, height);
+            HorizontalResolution = Image.HorizontalResolution;
+            VerticalResolution = Image.VerticalResolution;
         }
 
         /// <summary>Create a KalikoImage with a defined width and height.</summary>
@@ -141,6 +146,7 @@ namespace Kaliko.ImageLibrary {
 
         #endregion
 
+
         #region Internal properties
 
         internal Image Image { get; set; }
@@ -155,14 +161,23 @@ namespace Kaliko.ImageLibrary {
 
         #endregion
 
+
         #region Public properties
 
         /// <summary>Color used for background.</summary>
         public Color BackgroundColor { get; set; }
+        
         /// <summary>Color used for graphical operations such as writing text on image.</summary>
         public Color Color { get; set; }
+
         /// <summary>Rendering mode for text operations.</summary>
         public TextRenderingHint TextRenderingHint { get; set; }
+
+        /// <summary>Horizontal resolution of image (DPI)</summary>
+        public float HorizontalResolution { get; set; }
+
+        /// <summary>Vertical resolution of image (DPI)</summary>
+        public float VerticalResolution { get; set; }
 
         /// <summary>Image width.</summary>
         public int Width {
@@ -323,6 +338,8 @@ namespace Kaliko.ImageLibrary {
             _g.ResetTransform();
         }
 
+        /// <summary>Write text to image</summary>
+        /// <param name="textField"></param>
         public void DrawText(TextField textField) {
             textField.Draw(this);
         }
@@ -339,6 +356,8 @@ namespace Kaliko.ImageLibrary {
         public void LoadImage(string fileName) {
             using (var bitmap = new Bitmap(fileName)) {
                 Image = new Bitmap(bitmap);
+                HorizontalResolution = bitmap.HorizontalResolution;
+                VerticalResolution = bitmap.VerticalResolution;
             }
 
             MakeImageNonIndexed();
@@ -353,6 +372,8 @@ namespace Kaliko.ImageLibrary {
         public void LoadImage(Stream stream) {
             using (var bitmap = new Bitmap(stream)) {
                 Image = new Bitmap(bitmap);
+                HorizontalResolution = bitmap.HorizontalResolution;
+                VerticalResolution = bitmap.VerticalResolution;
             }
 
             MakeImageNonIndexed();
@@ -639,9 +660,6 @@ namespace Kaliko.ImageLibrary {
 
         #region Functions for image saving and streaming
 
-
-
-
         /// <summary>Save image to the response stream in JPG-format. Ideal for sending realtime generated images to the web client requesting it.</summary>
         /// <param name="quality"></param>
         /// <param name="fileName"></param>
@@ -674,27 +692,29 @@ namespace Kaliko.ImageLibrary {
         /// <summary></summary>
         /// <param name="stream">Stream to save the image to</param>
         /// <param name="quality">Compression quality setting (0-100)</param>
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
         /// <example>
         /// 	<code title="Example" description="" lang="CS">
         /// // Save image to stream in jpg format with quality setting 90
         /// MemoryStream memoryStream = new MemoryStream();
         /// image.SaveJpg(memoryStream, 90);</code>
         /// </example>
-        public void SaveJpg(Stream stream, long quality) {
-            ImageOutput.SaveStream(Image, stream, quality, "image/jpeg");
+        public void SaveJpg(Stream stream, long quality, bool saveResolution = false) {
+            ImageOutput.SaveStream(this, stream, quality, "image/jpeg", saveResolution);
         }
 
 
         /// <summary>Save image to file in JPG-format.</summary>
         /// <param name="fileName">Name of the file</param>
         /// <param name="quality">Compression quality setting (0-100)</param>
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
         /// <example>
         /// 	<code title="Example" description="" lang="CS">
         /// // Save image to file system in jpg format with quality setting 90
         /// image.SaveJpg(@"C:\MyImages\Output.jpg", 90);</code>
         /// </example>
-        public void SaveJpg(string fileName, long quality) {
-            ImageOutput.SaveFile(Image, fileName, quality, "image/jpeg");
+        public void SaveJpg(string fileName, long quality, bool saveResolution = false) {
+            ImageOutput.SaveFile(this, fileName, quality, "image/jpeg", saveResolution);
         }
 
 
@@ -703,9 +723,10 @@ namespace Kaliko.ImageLibrary {
         /// <excludetoc/>
         /// <param name="stream"></param>
         /// <param name="quality"></param>
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
         [Obsolete("SavePng(Stream stream, long quality) is deprecated, use SavePng(Stream stream) instead.")]
-        public void SavePng(Stream stream, long quality) {
-            ImageOutput.SaveStream(Image, stream, quality, "image/png");
+        public void SavePng(Stream stream, long quality, bool saveResolution = false) {
+            ImageOutput.SaveStream(this, stream, quality, "image/png", saveResolution);
         }
 
 
@@ -714,23 +735,26 @@ namespace Kaliko.ImageLibrary {
         /// <excludetoc/>
         /// <param name="fileName"></param>
         /// <param name="quality"></param>
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
         [Obsolete("SavePng(string fileName, long quality) is deprecated, use SavePng(string fileName) instead.")]
-        public void SavePng(string fileName, long quality) {
-            ImageOutput.SaveFile(Image, fileName, quality, "image/png");
+        public void SavePng(string fileName, long quality, bool saveResolution = false) {
+            ImageOutput.SaveFile(this, fileName, quality, "image/png", saveResolution);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="stream"></param>
-        public void SavePng(Stream stream) {
-            Image.Save(stream, ImageFormat.Png);
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
+        public void SavePng(Stream stream, bool saveResolution = false) {
+            ImageOutput.SaveStream(this, stream, ImageFormat.Png, saveResolution);
         }
 
         /// <summary>Save image to file in PNG-format.</summary>
         /// <param name="fileName"></param>
-        public void SavePng(string fileName) {
-            Image.Save(fileName, ImageFormat.Png);
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
+        public void SavePng(string fileName, bool saveResolution = false) {
+            ImageOutput.SaveFile(this, fileName, ImageFormat.Png, saveResolution);
         }
 
 
@@ -754,15 +778,17 @@ namespace Kaliko.ImageLibrary {
         /// 
         /// </summary>
         /// <param name="stream"></param>
-        public void SaveBmp(Stream stream) {
-            Image.Save(stream, ImageFormat.Bmp);
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
+        public void SaveBmp(Stream stream, bool saveResolution = false) {
+            ImageOutput.SaveStream(this, stream, ImageFormat.Bmp, saveResolution);
         }
 
 
         /// <summary>Save image to file in BMP-format.</summary>
         /// <param name="fileName"></param>
-        public void SaveBmp(string fileName) {
-            Image.Save(fileName, ImageFormat.Bmp);
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
+        public void SaveBmp(string fileName, bool saveResolution = false) {
+            ImageOutput.SaveFile(this, fileName, ImageFormat.Bmp, saveResolution);
         }
 
 
@@ -771,21 +797,23 @@ namespace Kaliko.ImageLibrary {
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="format"></param>
-        public void SaveBmp(Stream stream, ImageFormat format) {
-            Image.Save(stream, format);
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
+        public void SaveBmp(Stream stream, ImageFormat format, bool saveResolution = false) {
+            ImageOutput.SaveStream(this, stream, format, saveResolution);
         }
 
 
         /// <summary>Generic method that will save the image in the specified ImageFormat.</summary>
         /// <param name="fileName"></param>
         /// <param name="format">Image format to save the file in, for example ImageFormat.Tiff</param>
+        /// <param name="saveResolution">Save original/user-defined resolution</param>
         /// <example>
         /// 	<code title="Example" description="" lang="CS">
         /// // Save image to file system in the selected format
         /// image.SaveImage(@"C:\MyImages\Output.tif", ImageFormat.Tiff);</code>
         /// </example>
-        public void SaveImage(string fileName, ImageFormat format) {
-            Image.Save(fileName, format);
+        public void SaveImage(string fileName, ImageFormat format, bool saveResolution = false) {
+            ImageOutput.SaveFile(this, fileName, format, saveResolution);
         }
 
 
