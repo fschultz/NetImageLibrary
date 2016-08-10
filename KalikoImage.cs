@@ -390,22 +390,22 @@ namespace Kaliko.ImageLibrary {
             request.Credentials = CredentialCache.DefaultCredentials;
 
             var source = request.GetResponse().GetResponseStream();
-            var ms = new MemoryStream();
+            var stream = new MemoryStream();
 
             var data = new byte[256];
-            int c = source.Read(data, 0, data.Length);
+            var readBytes = source.Read(data, 0, data.Length);
 
-            while (c > 0) {
-                ms.Write(data, 0, c);
-                c = source.Read(data, 0, data.Length);
+            while (readBytes > 0) {
+                stream.Write(data, 0, readBytes);
+                readBytes = source.Read(data, 0, data.Length);
             }
 
             source.Close();
-            ms.Position = 0;
+            stream.Position = 0;
 
-            LoadImage(ms);
+            LoadImage(stream);
 
-            ms.Close();
+            stream.Close();
         }
 
         /// <summary>
@@ -902,21 +902,21 @@ namespace Kaliko.ImageLibrary {
         }
 
         protected virtual void Dispose(bool disposing) {
-            if (!_disposed) {
-                if (disposing) {
-                    if (_font != null) {
-                        _font.Dispose();
-                    }
-                    if (_g != null) {
-                        _g.Dispose();
-                    }
-                    if (Image != null) {
-                        Image.Dispose();
-                    }
+            if (_disposed) return;
+            
+            if (disposing) {
+                if (_font != null) {
+                    _font.Dispose();
                 }
-
-                _disposed = true;
+                if (_g != null) {
+                    _g.Dispose();
+                }
+                if (Image != null) {
+                    Image.Dispose();
+                }
             }
+
+            _disposed = true;
         }
 
         ~KalikoImage() {
