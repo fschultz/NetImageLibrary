@@ -9,7 +9,7 @@
 
 You'll find information on how to get started at http://kaliko.com/image-library/get-started/ and full API documentation at http://kaliko.com/image-library/api/
 
-<a href="https://docs.google.com/uc?export=download&id=0ByDd6qehepdVNXFJZm9MYW13dDQ">Download latest binary version, 2.0.0</a>
+<a href="https://www.nuget.org/packages/ImageLibrary/">Get .Net Image Library from NuGet</a>
 
 Using only safe code making this library possible to use on web hosts with medium trust.
 
@@ -25,6 +25,9 @@ Current build contains the following filters:
 If you plan using this library with WPF or simular, read this post on <a href="http://labs.kaliko.com/2011/03/convert-to-bitmapimage.html">how to convert an KalikoImage object to System.Windows.Media.Imaging.BitmapImage and System.Windows.Controls.Image</a>.
 
 ## History
+**2.0.6**
+* Added support to store original or set new resolution (DPI) 
+
 **2.0.5**
 * Rewritten file loader to prevent file locks
 * Fixed image loading to ignore pixel-per-inch resolutions of original images
