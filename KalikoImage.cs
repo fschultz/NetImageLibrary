@@ -941,6 +941,20 @@ namespace Kaliko.ImageLibrary {
 
         #endregion
 
+
+        #region Functions for rotation
+
+        /// <summary>
+        /// Rotates, flips, or rotates and flips the image
+        /// </summary>
+        /// <param name="rotateFlipType">The type of rotation and flip to apply to the image</param>
+        public void RotateFlip(RotateFlipType rotateFlipType) {
+            Image.RotateFlip(rotateFlipType);
+            _g = Graphics.FromImage(Image);
+        }
+
+        #endregion
+
         /// <summary>Int array matching PixelFormat.Format32bppArgb (bgrA in real life)</summary>
         public int[] IntArray {
             get {
