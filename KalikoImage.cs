@@ -247,7 +247,9 @@ namespace Kaliko.ImageLibrary {
                 Color = Color,
                 _font = _font,
                 BackgroundColor = BackgroundColor,
-                TextRenderingHint = TextRenderingHint
+                TextRenderingHint = TextRenderingHint,
+                HorizontalResolution = HorizontalResolution,
+                VerticalResolution = VerticalResolution
             };
 
             return newImage;
