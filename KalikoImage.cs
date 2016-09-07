@@ -261,6 +261,14 @@ namespace Kaliko.ImageLibrary {
             _g = Graphics.FromImage(Image);
         }
 
+        /// <summary>
+        /// Get the current instance as Bitmap
+        /// </summary>
+        /// <returns></returns>
+        public Bitmap GetAsBitmap() {
+            return (Bitmap)Image;
+        }
+
         #endregion
 
 
