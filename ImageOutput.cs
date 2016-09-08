@@ -34,7 +34,7 @@ namespace Kaliko.ImageLibrary {
 
     internal class ImageOutput {
         private static ImageCodecInfo GetEncoderInfo(String mimeType) {
-            ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
+            var encoders = ImageCodecInfo.GetImageEncoders();
 
             foreach (var codecInfo in encoders) {
                 if (codecInfo.MimeType == mimeType) {
@@ -55,10 +55,19 @@ namespace Kaliko.ImageLibrary {
             return stream.OutputStream;
         }
 
-        internal static void SaveStream(Image image, Stream stream, long quality, string imageFormat) {
-            var encparam = GetEncoderParameters(quality);
-            ImageCodecInfo ic = GetEncoderInfo(imageFormat);
-            image.Save(stream, ic, encparam);
+        internal static void SaveStream(KalikoImage image, Stream stream, long quality, string imageFormat, bool saveResolution) {
+            var encoderParameters = GetEncoderParameters(quality);
+            var encoderInfo = GetEncoderInfo(imageFormat);
+
+            if (saveResolution) {
+                using (var copy = new Bitmap(image.Image)) {
+                    copy.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+                    copy.Save(stream, encoderInfo, encoderParameters);
+                }
+            }
+            else {
+                image.Image.Save(stream, encoderInfo, encoderParameters);
+            }
         }
 
         private static EncoderParameters GetEncoderParameters(long quality) {
@@ -67,10 +76,43 @@ namespace Kaliko.ImageLibrary {
             return encparam;
         }
 
-        internal static void SaveFile(Image image, string fileName, long quality, string imageFormat) {
-            var encparam = GetEncoderParameters(quality);
-            ImageCodecInfo ic = GetEncoderInfo(imageFormat);
-            image.Save(fileName, ic, encparam);
+        internal static void SaveFile(KalikoImage image, string fileName, long quality, string imageFormat, bool saveResolution) {
+            var encoderParameters = GetEncoderParameters(quality);
+            var encoderInfo = GetEncoderInfo(imageFormat);
+
+            if (saveResolution) {
+                using (var copy = new Bitmap(image.Image)) {
+                    copy.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+                    copy.Save(fileName, encoderInfo, encoderParameters);
+                }
+            }
+            else {
+                image.Image.Save(fileName, encoderInfo, encoderParameters);
+            }
+        }
+
+        internal static void SaveFile(KalikoImage image, string fileName, ImageFormat imageFormat, bool saveResolution) {
+            if (saveResolution) {
+                using (var copy = new Bitmap(image.Image)) {
+                    copy.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+                    copy.Save(fileName, imageFormat);
+                }
+            }
+            else {
+                image.Image.Save(fileName, imageFormat);
+            }
+        }
+
+        internal static void SaveStream(KalikoImage image, Stream stream, ImageFormat imageFormat, bool saveResolution) {
+            if (saveResolution) {
+                using (var copy = new Bitmap(image.Image)) {
+                    copy.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+                    copy.Save(stream, imageFormat);
+                }
+            }
+            else {
+                image.Image.Save(stream, imageFormat);
+            }
         }
     }
 }

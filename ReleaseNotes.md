@@ -1,3 +1,8 @@
+### New in 2.0.6
+* Added support to store original or set new resolution (DPI) 
+* Added RotateFlip method
+* Added access to bitmap data
+
 ### New in 2.0.5
 * Rewritten file loader to prevent file locks
 * Fixed image loading to ignore pixel-per-inch resolutions of original images
