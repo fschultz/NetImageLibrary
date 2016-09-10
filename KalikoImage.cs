@@ -901,11 +901,8 @@ namespace Kaliko.ImageLibrary {
         public byte[] ByteArray {
             get {
                 if (_byteArray == null) {
-                    BitmapData data = ((Bitmap)Image).LockBits(
-                        new Rectangle(0, 0, Image.Width, Image.Height),
-                        ImageLockMode.ReadOnly,
-                        PixelFormat.Format32bppArgb);
-                    int length = Image.Width*Image.Height*4;
+                    var data = ((Bitmap)Image).LockBits(new Rectangle(0, 0, Image.Width, Image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    var length = Image.Width*Image.Height*4;
                     _byteArray = new byte[length];
 
                     if (data.Stride == Image.Width*4) {
@@ -924,7 +921,7 @@ namespace Kaliko.ImageLibrary {
             }
             set {
                 Image = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
-                BitmapData data = ((Bitmap)Image).LockBits(new Rectangle(0, 0, Image.Width, Image.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                var data = ((Bitmap)Image).LockBits(new Rectangle(0, 0, Image.Width, Image.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
 
                 if (data.Stride == Image.Width*4) {
                     Marshal.Copy(value, 0, data.Scan0, value.Length);
@@ -940,7 +937,24 @@ namespace Kaliko.ImageLibrary {
             }
         }
 
+        /// <summary>
+        /// Lock bits in bitmap for direct access
+        /// </summary>
+        /// <returns></returns>
+        public BitmapData LockBits() {
+            var bitmap = (Bitmap)Image;
+            return bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+        }
 
+        /// <summary>
+        /// Unlock bits in bitmap after direct access
+        /// </summary>
+        /// <param name="bitmapData"></param>
+        public void UnlockBits(BitmapData bitmapData) {
+            var bitmap = (Bitmap)Image;
+            bitmap.UnlockBits(bitmapData);
+            GC.Collect();
+        }
 
         /// <summary>Apply a filter to the current Image.</summary>
         /// <param name="filter">Any filter that supports the <see cref="Filters.IFilter">IFilter</see> interface</param>
