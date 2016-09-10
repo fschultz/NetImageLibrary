@@ -31,7 +31,6 @@ namespace Kaliko.ImageLibrary.Filters {
     /// <summary>Simple filter for adjusting brightness in images.</summary>
     public class BrightnessFilter : IFilter {
         private readonly double _brightness;
-        private byte[] _precalcTable;
 
         /// <param name="changeInBrightness">The amount of change to be applied to the brightness. Entered as either a positive - to make it brighter - or negative - to make it darker - value (zero
         /// means no change).</param>
@@ -40,37 +39,39 @@ namespace Kaliko.ImageLibrary.Filters {
         }
 
         /// <summary>Execute the filter.</summary>
-        public void Run(KalikoImage image) {
-            PrecalculateTable();
+        public virtual void Run(KalikoImage image) {
             ChangeBrightness(image);
         }
 
-        private void PrecalculateTable() {
-            _precalcTable = new byte[256];
+        protected byte[] BuildLookupTable() {
+            var lookupTable = new byte[256];
 
-            for(int i = 0;i < 256;i++) {
-                int val = (int)Math.Round(i * _brightness);
+            for(var i = 0;i < 256;i++) {
+                var val = (int)Math.Round(i * _brightness);
                 if(val < 0) {
                     val = 0;
                 }
                 else if(val > 255) {
                     val = 255;
                 }
-                _precalcTable[i] = (byte)val;
+                lookupTable[i] = (byte)val;
             }
+
+            return lookupTable;
         }
 
         private void ChangeBrightness(KalikoImage image) {
+            var lookupTable = BuildLookupTable();
 
-            byte[] b = image.ByteArray;
+            var byteArray = image.ByteArray;
 
-            for(int i = 0, l = b.Length;i < l;i += 4) {
-                b[i] = _precalcTable[b[i]];          // b
-                b[i + 1] = _precalcTable[b[i + 1]];  // g
-                b[i + 2] = _precalcTable[b[i + 2]];  // r
+            for(int i = 0, l = byteArray.Length;i < l;i += 4) {
+                byteArray[i] = lookupTable[byteArray[i]];          // b
+                byteArray[i + 1] = lookupTable[byteArray[i + 1]];  // g
+                byteArray[i + 2] = lookupTable[byteArray[i + 2]];  // r
             }
 
-            image.ByteArray = b;
+            image.ByteArray = byteArray;
         }
     }
 }

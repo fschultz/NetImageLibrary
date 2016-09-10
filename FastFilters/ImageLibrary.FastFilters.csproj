@@ -57,13 +57,15 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Properties\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="FastContrastFilter.cs" />
+    <Compile Include="FastBrightnessFilter.cs" />
+    <Compile Include="FastChromaKeyFilter.cs" />
     <Compile Include="FastUnsharpMaskFilter.cs" />
     <Compile Include="FastDesaturationFilter.cs" />
     <Compile Include="FastInvertFilter.cs" />
