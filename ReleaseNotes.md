@@ -1,5 +1,6 @@
 ### New in 3.0.0
-* Adding faster filter alternatives for full trust environmnets
+* Added faster filter alternatives for full trust environmnets
+* Added SetResolution functions
 
 ### New in 2.0.6
 * Added support to store original or set new resolution (DPI) 

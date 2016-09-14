@@ -269,6 +269,24 @@ namespace Kaliko.ImageLibrary {
             return (Bitmap)Image;
         }
 
+        /// <summary>
+        /// Set resolution
+        /// </summary>
+        /// <param name="horizontalResolution"></param>
+        /// <param name="verticalResolution"></param>
+        public void SetResolution(float horizontalResolution, float verticalResolution) {
+            HorizontalResolution = horizontalResolution;
+            VerticalResolution = verticalResolution;
+            ((Bitmap)Image).SetResolution(horizontalResolution, verticalResolution);
+        }
+
+        /// <summary>
+        /// Set resolution to original values
+        /// </summary>
+        public void SetResolution() {
+            ((Bitmap)Image).SetResolution(HorizontalResolution, VerticalResolution);
+        }
+
         #endregion
 
 

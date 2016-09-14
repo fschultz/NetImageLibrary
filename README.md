@@ -25,6 +25,10 @@ Current build contains the following filters:
 If you plan using this library with WPF or simular, read this post on <a href="http://labs.kaliko.com/2011/03/convert-to-bitmapimage.html">how to convert an KalikoImage object to System.Windows.Media.Imaging.BitmapImage and System.Windows.Controls.Image</a>.
 
 ## History
+**3.0.0**
+* Added faster filter alternatives for full trust environmnets
+* Added SetResolution functions
+
 **2.0.6**
 * Added support to store original or set new resolution (DPI) 
 * Added RotateFlip method
