@@ -13,6 +13,8 @@ You'll find information on how to get started at http://kaliko.com/image-library
 
 Using only safe code making this library possible to use on web hosts with medium trust.
 
+When having access to full trust make sure to use ImageLibrary.FastFilters to greatly improve performance!
+
 Current build contains the following filters:
   * Gaussian blur filter
   * Unsharpen mask filter
