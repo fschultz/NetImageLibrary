@@ -13,6 +13,8 @@ You'll find information on how to get started at http://kaliko.com/image-library
 
 Using only safe code making this library possible to use on web hosts with medium trust.
 
+When having access to full trust make sure to use ImageLibrary.FastFilters to greatly improve performance!
+
 Current build contains the following filters:
   * Gaussian blur filter
   * Unsharpen mask filter
@@ -25,8 +27,14 @@ Current build contains the following filters:
 If you plan using this library with WPF or simular, read this post on <a href="http://labs.kaliko.com/2011/03/convert-to-bitmapimage.html">how to convert an KalikoImage object to System.Windows.Media.Imaging.BitmapImage and System.Windows.Controls.Image</a>.
 
 ## History
+**3.0.0**
+* Added faster filter alternatives for full trust environmnets
+* Added SetResolution functions
+
 **2.0.6**
 * Added support to store original or set new resolution (DPI) 
+* Added RotateFlip method
+* Added access to bitmap data
 
 **2.0.5**
 * Rewritten file loader to prevent file locks

@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/bin
+/.nuget
+/FastFilters/bin
+/FastFilters/obj
+/obj
