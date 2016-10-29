@@ -55,5 +55,29 @@ namespace Kaliko.ImageLibrary.Scaling {
 
             return DrawResizedImage(sourceImage, calculatedSize, originalSize);
         }
+
+        /// <summary>Core function that applies the scaling to the image with the option to prevent upscaling</summary>
+        /// <param name="sourceImage"></param>
+        /// <param name="preventUpscaling"></param>
+        /// <returns>Scaled image</returns>
+        public KalikoImage Scale(KalikoImage sourceImage, bool preventUpscaling) {
+            if (preventUpscaling && IsTargetLargerThan(sourceImage)) {
+                return sourceImage;
+            }
+
+            return Scale(sourceImage);
+        }
+
+        /// <summary>
+        /// Controls if target size is larger than original size
+        /// </summary>
+        /// <param name="sourceImage"></param>
+        /// <returns></returns>
+        public bool IsTargetLargerThan(KalikoImage sourceImage) {
+            var originalSize = new Size(sourceImage.Width, sourceImage.Height);
+            var calculatedSize = CalculateNewImageSize(originalSize);
+
+            return originalSize.Width <= calculatedSize.Width && originalSize.Height <= calculatedSize.Height;
+        }
     }
 }

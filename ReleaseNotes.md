@@ -1,3 +1,6 @@
+### New in 3.0.1
+* Added option to prevent upscaling when resizing images
+
 ### New in 3.0.0
 * Added faster filter alternatives for full trust environmnets
 * Added SetResolution functions

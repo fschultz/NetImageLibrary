@@ -467,7 +467,7 @@ namespace Kaliko.ImageLibrary {
         /// <summary>Scale the image using a defined scaling engine which can be <see cref="Scaling.CropScaling">CropScaling Class</see> will crop the image so that the final result always
         /// has the given dimension, <see cref="Scaling.FitScaling">FitScaling Class</see> will ensure that the complete image is visible inside the given
         /// dimension or <see cref="Scaling.PadScaling">PadScaling Class</see> that will pad the image so that it cover the given dimension.</summary>
-        /// <param name="scaleEngine"></param>
+        /// <param name="scaleEngine">Scale engine to use</param>
         /// <returns></returns>
         /// <seealso cref="Scaling.CropScaling"></seealso>
         /// <seealso cref="Scaling.FitScaling"></seealso>
@@ -477,7 +477,20 @@ namespace Kaliko.ImageLibrary {
             return resizedImage;
         }
 
-
+        /// <summary>Scale the image using a defined scaling engine which can be <see cref="Scaling.CropScaling">CropScaling Class</see> will crop the image so that the final result always
+        /// has the given dimension, <see cref="Scaling.FitScaling">FitScaling Class</see> will ensure that the complete image is visible inside the given
+        /// dimension or <see cref="Scaling.PadScaling">PadScaling Class</see> that will pad the image so that it cover the given dimension.</summary>
+        /// <param name="scaleEngine">Scale engine to use</param>
+        /// <param name="preventUpscaling">Prevent upscaling</param>
+        /// <returns></returns>
+        /// <seealso cref="Scaling.CropScaling"></seealso>
+        /// <seealso cref="Scaling.FitScaling"></seealso>
+        /// <seealso cref="Scaling.PadScaling"></seealso>
+        public KalikoImage Scale(ScalingBase scaleEngine, bool preventUpscaling)
+        {
+            var resizedImage = scaleEngine.Scale(this, preventUpscaling);
+            return resizedImage;
+        }
 
         internal static void DrawScaledImage(KalikoImage destinationImage, KalikoImage sourceImage, int x, int y, int width, int height) {
             DrawScaledImage(destinationImage.Image, sourceImage.Image, x, y, width, height);
