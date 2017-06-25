@@ -627,13 +627,13 @@ namespace Kaliko.ImageLibrary {
         /// <summary>Uses the defined image as a pattern to fill the image (will be tiled if the destination image is larger than the source image)..</summary>
         /// <param name="image"></param>
         public void BlitFill(Image image) {
-            int width = image.Width;
-            int height = image.Height;
+            var width = image.Width;
+            var height = image.Height;
             var columns = (int)Math.Ceiling((float)Image.Width/width);
-            var rows = (int)Math.Ceiling((float)Image.Width/width);
+            var rows = (int)Math.Ceiling((float)Image.Height/height);
 
-            for (int y = 0; y < rows; y++) {
-                for (int x = 0; x < columns; x++) {
+            for (var y = 0; y < rows; y++) {
+                for (var x = 0; x < columns; x++) {
                     _g.DrawImageUnscaled(image, x*width, y*height);
                 }
             }
