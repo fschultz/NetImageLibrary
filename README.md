@@ -27,6 +27,12 @@ Current build contains the following filters:
 If you plan using this library with WPF or simular, read this post on <a href="http://labs.kaliko.com/2011/03/convert-to-bitmapimage.html">how to convert an KalikoImage object to System.Windows.Media.Imaging.BitmapImage and System.Windows.Controls.Image</a>.
 
 ## History
+**3.0.2**
+* Fixed bug where BlitFill doesn't properly fill portrait sized images
+
+**3.0.1**
+* Added option to prevent upscaling when resizing images
+
 **3.0.0**
 * Added faster filter alternatives for full trust environmnets
 * Added SetResolution functions
