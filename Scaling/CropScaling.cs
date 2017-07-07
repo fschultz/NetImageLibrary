@@ -41,7 +41,7 @@ namespace Kaliko.ImageLibrary.Scaling {
         /// </summary>
         /// <param name="targetWidth"></param>
         /// <param name="targetHeight"></param>
-        public CropScaling(int targetWidth, int targetHeight) {
+        public CropScaling(int targetWidth, int targetHeight) : base(targetWidth, targetHeight) {
             _targetSize = new Size(targetWidth, targetHeight);
         }
 

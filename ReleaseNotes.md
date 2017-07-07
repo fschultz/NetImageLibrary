@@ -1,5 +1,5 @@
 ### New in 3.0.2
-* Fixed bug where BlitFill doesn't fill proper on portrait sized images
+* Fixed bug where BlitFill doesn't properly fill portrait sized images
 
 ### New in 3.0.1
 * Added option to prevent upscaling when resizing images

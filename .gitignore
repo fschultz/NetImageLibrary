@@ -7,3 +7,8 @@
 /FastFilters/bin
 /FastFilters/obj
 /obj
+*.bat
+*.suo
+*.user
+*.nuspec
+*.fsx

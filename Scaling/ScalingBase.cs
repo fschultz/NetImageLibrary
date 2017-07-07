@@ -33,9 +33,18 @@ namespace Kaliko.ImageLibrary.Scaling {
     /// <seealso cref="FitScaling"></seealso>
     /// <seealso cref="PadScaling"></seealso>
     public abstract class ScalingBase {
+        public int TargetWidth { get; set; }
+        
+        public int TargetHeight { get; set; }
+
         internal abstract Size CalculateNewImageSize(Size originalSize);
 
         internal abstract KalikoImage DrawResizedImage(KalikoImage sourceImage, Size calculatedSize, Size originalSize);
+
+        internal ScalingBase(int targetWidth, int targetHeight) {
+            TargetWidth = targetWidth;
+            TargetHeight = targetHeight;
+        }
 
         internal double GetRatio(Size size) {
             return GetRatio(size.Width, size.Height);

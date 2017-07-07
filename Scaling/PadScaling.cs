@@ -42,7 +42,7 @@ namespace Kaliko.ImageLibrary.Scaling {
         /// </summary>
         /// <param name="targetWidth"></param>
         /// <param name="targetHeight"></param>
-        public PadScaling(int targetWidth, int targetHeight) {
+        public PadScaling(int targetWidth, int targetHeight) : base(targetWidth, targetHeight) {
             _targetSize = new Size(targetWidth, targetHeight);
         }
 
@@ -52,7 +52,7 @@ namespace Kaliko.ImageLibrary.Scaling {
         /// <param name="targetWidth"></param>
         /// <param name="targetHeight"></param>
         /// <param name="backgroundColor"></param>
-        public PadScaling(int targetWidth, int targetHeight, Color backgroundColor) {
+        public PadScaling(int targetWidth, int targetHeight, Color backgroundColor) : base(targetWidth, targetHeight) {
             _backgroundColor = backgroundColor;
             _targetSize = new Size(targetWidth, targetHeight);
         }
