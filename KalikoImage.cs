@@ -678,22 +678,19 @@ namespace Kaliko.ImageLibrary {
 
             Image = image.Image;
         }
-
-
         #endregion
-
 
         #region Functions for image saving and streaming
 
+#if !NETSTANDARD2_0
         /// <summary>Save image to the response stream in JPG-format. Ideal for sending realtime generated images to the web client requesting it.</summary>
         /// <param name="quality"></param>
         /// <param name="fileName"></param>
         /// <remarks>This method will set the proper HTTP-headers such as filename and mime-type.</remarks>
-        public void StreamJpg(long quality, string fileName) {
-            var imageStream = ImageOutput.PrepareImageStream(fileName, "image/jpeg");
-            SaveJpg(imageStream, quality);
+         public void StreamJpg(long quality, string fileName) {
+          var imageStream = ImageOutput.PrepareImageStream(fileName, "image/jpeg");
+          SaveJpg(imageStream, quality);
         }
-
 
         /// <summary>
         /// Save image to the response stream in PNG-format. Ideal for sending realtime generated images to the web client requesting it.
@@ -712,19 +709,19 @@ namespace Kaliko.ImageLibrary {
             var imageStream = ImageOutput.PrepareImageStream(fileName, "image/gif");
             SaveGif(imageStream);
         }
+#endif
 
-
-        /// <summary>Save image to stream in JPG-format</summary>
-        /// <param name="stream">Stream to save the image to</param>
-        /// <param name="quality">Compression quality setting (0-100)</param>
-        /// <param name="saveResolution">Save original/user-defined resolution</param>
-        /// <example>
-        /// 	<code title="Example" description="" lang="CS">
-        /// // Save image to stream in jpg format with quality setting 90
-        /// MemoryStream memoryStream = new MemoryStream();
-        /// image.SaveJpg(memoryStream, 90, true);</code>
-        /// </example>
-        public void SaveJpg(Stream stream, long quality, bool saveResolution) {
+    /// <summary>Save image to stream in JPG-format</summary>
+    /// <param name="stream">Stream to save the image to</param>
+    /// <param name="quality">Compression quality setting (0-100)</param>
+    /// <param name="saveResolution">Save original/user-defined resolution</param>
+    /// <example>
+    /// 	<code title="Example" description="" lang="CS">
+    /// // Save image to stream in jpg format with quality setting 90
+    /// MemoryStream memoryStream = new MemoryStream();
+    /// image.SaveJpg(memoryStream, 90, true);</code>
+    /// </example>
+    public void SaveJpg(Stream stream, long quality, bool saveResolution) {
             ImageOutput.SaveStream(this, stream, quality, "image/jpeg", saveResolution);
         }
 
@@ -919,10 +916,10 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        #endregion
+#endregion
 
 
-        #region Functions for filters and bitmap manipulation
+#region Functions for filters and bitmap manipulation
 
         private byte[] _byteArray;
         private bool _disposed;
@@ -994,10 +991,10 @@ namespace Kaliko.ImageLibrary {
             filter.Run(this);
         }
 
-        #endregion
+#endregion
 
 
-        #region Functions for rotation
+#region Functions for rotation
 
         /// <summary>
         /// Rotates, flips, or rotates and flips the image
@@ -1008,7 +1005,7 @@ namespace Kaliko.ImageLibrary {
             _g = Graphics.FromImage(Image);
         }
 
-        #endregion
+#endregion
 
         /// <summary>Int array matching PixelFormat.Format32bppArgb (bgrA in real life)</summary>
         public int[] IntArray {
@@ -1062,7 +1059,7 @@ namespace Kaliko.ImageLibrary {
         }
 
 
-        #region Deprecated methods only kept for legacy
+#region Deprecated methods only kept for legacy
 
         /// <exclude/>
         /// <excludetoc/>
@@ -1092,6 +1089,6 @@ namespace Kaliko.ImageLibrary {
             return Scale(scaleEngine);
         }
 
-        #endregion
+#endregion
     }
 }

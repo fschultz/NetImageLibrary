@@ -45,6 +45,10 @@ namespace Kaliko.ImageLibrary {
             return null;
         }
 
+#if !NETSTANDARD2_0
+    // httpresponse doesn't exist in netStandard, at least not in the same way. Can't
+    // get the outputstream, even if you use the extensions & abstractons packages. 
+
         internal static Stream PrepareImageStream(string fileName, string mime) {
             HttpResponse stream = HttpContext.Current.Response;
             stream.Clear();
@@ -54,8 +58,9 @@ namespace Kaliko.ImageLibrary {
             stream.AddHeader("Content-Disposition", "inline;filename=" + fileName);
             return stream.OutputStream;
         }
+#endif
 
-        internal static void SaveStream(KalikoImage image, Stream stream, long quality, string imageFormat, bool saveResolution) {
+    internal static void SaveStream(KalikoImage image, Stream stream, long quality, string imageFormat, bool saveResolution) {
             var encoderParameters = GetEncoderParameters(quality);
             var encoderInfo = GetEncoderInfo(imageFormat);
 

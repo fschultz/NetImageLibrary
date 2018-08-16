@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
+    <RootNamespace>ImageLibrary</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <Product>ImageLibrary</Product>
+    <Description>.NET library for easy image handling like cropping, thumbnails, streaming and more</Description>
+    <Company>Kaliko</Company>
+    <PackageId>Kaliko Image Library</PackageId>
+    <Copyright>Copyright © Fredrik Schultz and Contributors</Copyright>
+    <Authors>ImageLibrary.NetStdss</Authors>
+    <Version>3.0.2</Version>
+    <AssemblyName>Kaliko Image Library - NetStandard 2.0</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ImageOutput.cs" />
+    <None Remove="Properties\AssemblyInfo.cs" />
+    <None Remove="Properties\SolutionInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="ColorHandler.cs" />
+    <Compile Include="ColorSpace\CIELab.cs" />
+    <Compile Include="ColorSpace\CIEXYZ.cs" />
+    <Compile Include="ColorSpace\CMYK.cs" />
+    <Compile Include="ColorSpace\ColorSpaceHelper.cs" />
+    <Compile Include="ColorSpace\HSB.cs" />
+    <Compile Include="ColorSpace\HSL.cs" />
+    <Compile Include="ColorSpace\RGB.cs" />
+    <Compile Include="ColorSpace\YUV.cs" />
+    <Compile Include="Filters\BrightnessFilter.cs" />
+    <Compile Include="Filters\ChromaKeyFilter.cs" />
+    <Compile Include="Filters\ContrastFilter.cs" />
+    <Compile Include="Filters\ConvolveFilter.cs" />
+    <Compile Include="Filters\DesaturationFilter.cs" />
+    <Compile Include="Filters\IFilter.cs" />
+    <Compile Include="Filters\InvertFilter.cs" />
+    <Compile Include="Filters\Kernel.cs" />
+    <Compile Include="Filters\GaussianBlurFilter.cs" />
+    <Compile Include="Filters\UnsharpMaskFilter.cs" />
+    <Compile Include="ImageOutput.cs" />
+    <Compile Include="KalikoImage.cs" />
+    <Compile Include="Scaling\CropScaling.cs" />
+    <Compile Include="Scaling\FitScaling.cs" />
+    <Compile Include="Scaling\PadScaling.cs" />
+    <Compile Include="Scaling\ScalingBase.cs" />
+    <Compile Include="TextField.cs" />
+    <Compile Include="TextShadow.cs" />
+    <Compile Include="ThumbnailMethod.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>
