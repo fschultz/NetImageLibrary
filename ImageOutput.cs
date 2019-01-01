@@ -45,7 +45,7 @@ namespace Kaliko.ImageLibrary {
             return null;
         }
 
-#if !NETSTANDARD2_0
+#if !NETSTANDARD2_0 && !NETCOREAPP2_1 && !NETCOREAPP2_2
     // httpresponse doesn't exist in netStandard, at least not in the same way. Can't
     // get the outputstream, even if you use the extensions & abstractons packages. 
 

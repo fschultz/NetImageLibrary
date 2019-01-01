@@ -678,11 +678,11 @@ namespace Kaliko.ImageLibrary {
 
             Image = image.Image;
         }
-        #endregion
+    #endregion
 
-        #region Functions for image saving and streaming
+    #region Functions for image saving and streaming
 
-#if !NETSTANDARD2_0
+#if !NETSTANDARD2_0 && !NETCOREAPP2_1 && !NETCOREAPP2_2
         /// <summary>Save image to the response stream in JPG-format. Ideal for sending realtime generated images to the web client requesting it.</summary>
         /// <param name="quality"></param>
         /// <param name="fileName"></param>

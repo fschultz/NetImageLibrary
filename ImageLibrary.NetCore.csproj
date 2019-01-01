@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
@@ -14,7 +14,7 @@
     <Copyright>Copyright © Fredrik Schultz and Contributors</Copyright>
     <Authors>ImageLibrary.NetStdss</Authors>
     <Version>3.0.2</Version>
-    <AssemblyName>Kaliko Image Library - NetStandard 2.0</AssemblyName>
+    <AssemblyName>Kaliko Image Library - NetCore</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -56,6 +56,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <PackageReference Include="System.IO" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
