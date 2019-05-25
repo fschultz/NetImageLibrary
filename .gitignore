@@ -2,11 +2,12 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/bin
+/NetImageLibrary.Core/bin
+/NetImageLibrary.Core/obj
+/NetImageLibrary.FastFilters/bin
+/NetImageLibrary.FastFilters/obj
 /.nuget
-/FastFilters/bin
-/FastFilters/obj
-/obj
+/.vs
 *.bat
 *.suo
 *.user
