@@ -6,6 +6,14 @@
 /NetImageLibrary.Core/obj
 /NetImageLibrary.FastFilters/bin
 /NetImageLibrary.FastFilters/obj
+/TestAppNet461/bin
+/TestAppNet461/obj
+/TestAppNet461/output/*.jpg
+/TestAppNet461/output/*.png
+/TestAppNetCore/bin
+/TestAppNetCore/obj
+/TestAppNetCore/output/*.jpg
+/TestAppNetCore/output/*.png
 /.nuget
 /.vs
 *.bat

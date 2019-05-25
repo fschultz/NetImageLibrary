@@ -4,13 +4,20 @@ namespace Kaliko.ImageLibrary.Scaling {
     using System.Drawing;
 
     /// <summary>
-    /// Focal point scaling
+    /// Focal point scaling. Similar to crop scaling but allow you to set the focal point around which the cropping will be centered.
     /// </summary>
     public class FocalPointScaling : ScalingBase {
         private readonly double _focalPointX;
         private readonly double _focalPointY;
         private readonly Size _targetSize;
 
+        /// <summary>
+        /// Focal point scaling. Similar to crop scaling but allow you to set the focal point around which the cropping will be centered.
+        /// </summary>
+        /// <param name="targetWidth">Target width</param>
+        /// <param name="targetHeight">Target height</param>
+        /// <param name="focalPointX">Value between 0.0 (left side) and 1.0 (right side)</param>
+        /// <param name="focalPointY">Value between 0.0 (top side) and 1.0 (bottom side)</param>
         public FocalPointScaling(int targetWidth, int targetHeight, double focalPointX, double focalPointY) : base(targetWidth, targetHeight) {
             _focalPointX = focalPointX;
             _focalPointY = focalPointY;
