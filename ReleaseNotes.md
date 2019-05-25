@@ -1,5 +1,6 @@
 ### New in 4.0.0
-* Migrated projects to be compatible with .NET 4.61 and Core
+* Migrated projects to be compatible with .NET 4.x and Core
+* Added FocalPointScaling as an alternative to crop scaling but that allows to define the point of interest
 
 ### New in 3.0.2
 * Fixed bug where BlitFill doesn't properly fill portrait sized images
