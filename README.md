@@ -68,6 +68,105 @@ Similar to the crop scaling but takes a focal point as parameter to determine th
     }
 ```
 
+### Brightness filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastBrightnessFilter(50));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Contrast filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastContrastFilter(50));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Chroma key filter (green screen)
+```csharp
+    using (var image = new KalikoImage("c:\\images\\greenscreen.jpg"))) {
+        // Make green screen parts transparent
+        image.ApplyFilter(new FastChromaKeyFilter(Color.FromArgb(13, 161, 37), 40, 0.5f, 0.75f));
+
+        using (var background = new KalikoImage("c:\\images\\backdrop.jpg")) {
+            // Apply cleaned green screen image over backdrop
+            background.BlitImage(image);
+            background.SaveJpg(OutputPath, 80);
+        }
+    }
+```
+
+### Desaturate filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastDesaturationFilter());
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Gaussian blur filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastGaussianBlurFilter(1.1f));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Invert filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastInvertFilter());
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Unsharp mask filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastUnsharpMaskFilter(1.1f, 0.44f, 0));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Draw text
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        var text = new TextField("Lorem ipsum") {
+            Alignment = StringAlignment.Center,
+            VerticalAlignment = StringAlignment.Center,
+            Outline = 5,
+            OutlineColor = Color.Red,
+            Font = new Font("Arial", 60),
+            Rotation = 30f,
+            TextColor = Color.DarkOrange,
+            TextShadow = new TextShadow(Color.FromArgb(128, 0, 0, 0), 4, 4)
+        };
+        image.DrawText(text);
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Gradient fill
+```csharp
+    using (var image = new KalikoImage(ImagePath))
+    {
+        image.GradientFill(Color.FromArgb(128, 255, 200, 90), Color.FromArgb(128, 255, 64, 0));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Watermark
+```csharp
+    using (var image = new KalikoImage(ImagePath))
+    {
+        image.BlitFill("c:\\images\\semi-transparent-watermark.png"));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+
 ## History
 
 **4.0.0**
