@@ -7,7 +7,7 @@
     <RootNamespace>Kaliko.ImageLibrary.FastFilters</RootNamespace>
     <AssemblyName>Kaliko.ImageLibrary.FastFilters</AssemblyName>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageId>NetImageLibrary.FastFilters</PackageId>
+    <PackageId>ImageLibrary.FastFilters</PackageId>
     <PackageProjectUrl>https://kaliko.com/image-library/</PackageProjectUrl>
     <PackageIconUrl>https://kaliko.com/external/imagelibrary-logo.png</PackageIconUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -19,6 +19,7 @@
     <PackageTags>image resize crop thumbnail filters unsharpen chromakey</PackageTags>
     <Company></Company>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageReleaseNotes>* Migrated projects to be compatible with .NET 4.x and Core</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetImageLibrary.Core\NetImageLibrary.Core.csproj" />
@@ -32,12 +33,6 @@
   <!-- .NET 4.6.x references, compilation flags and build options -->
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net461'">
     <DefineConstants>NET46;NETFULL</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <OutputPath></OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-    <OutputPath></OutputPath>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="mscorlib" />

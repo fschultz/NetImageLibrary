@@ -17,6 +17,8 @@
     <Product>.NET Image Library</Product>
     <PackageTags>image resize crop thumbnail filters unsharpen chromakey</PackageTags>
     <Company></Company>
+    <PackageReleaseNotes>* Migrated projects to be compatible with .NET 4.x and Core</PackageReleaseNotes>
+    <DocumentationFile>.\NetImageLibrary.Core.xml</DocumentationFile>
   </PropertyGroup>
 
   <!-- .NET Standard 2.0 references, compilation flags and build options -->
@@ -27,10 +29,6 @@
   <!-- .NET 4.6.x references, compilation flags and build options -->
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net461'">
     <DefineConstants>NET46;NETFULL</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-    <DocumentationFile>D:\Dev\Projects\ImageLibrary\GitHub\NetImageLibrary\NetImageLibrary.Core\NetImageLibrary.Core.xml</DocumentationFile>
-    <OutputPath></OutputPath>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="mscorlib" />

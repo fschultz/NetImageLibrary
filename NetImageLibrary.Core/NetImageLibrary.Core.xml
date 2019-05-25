@@ -1422,8 +1422,17 @@
         </member>
         <member name="T:Kaliko.ImageLibrary.Scaling.FocalPointScaling">
             <summary>
-            Focal point scaling
+            Focal point scaling. Similar to crop scaling but allow you to set the focal point around which the cropping will be centered.
             </summary>
+        </member>
+        <member name="M:Kaliko.ImageLibrary.Scaling.FocalPointScaling.#ctor(System.Int32,System.Int32,System.Double,System.Double)">
+            <summary>
+            Focal point scaling. Similar to crop scaling but allow you to set the focal point around which the cropping will be centered.
+            </summary>
+            <param name="targetWidth">Target width</param>
+            <param name="targetHeight">Target height</param>
+            <param name="focalPointX">Value between 0.0 (left side) and 1.0 (right side)</param>
+            <param name="focalPointY">Value between 0.0 (top side) and 1.0 (bottom side)</param>
         </member>
         <member name="T:Kaliko.ImageLibrary.Scaling.PadScaling">
             <summary>
