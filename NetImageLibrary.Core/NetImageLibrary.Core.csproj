@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netstandard2.0;net461;</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0;net40;net461;</TargetFrameworks>
     <Version>4.0-alpha</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>Kaliko.ImageLibrary</RootNamespace>
@@ -21,11 +21,12 @@
     <DocumentationFile>.\NetImageLibrary.Core.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="**\*_NETCORE.cs" Condition=" '$(TargetFramework)' == 'net40'" />
     <Compile Remove="**\*_NETCORE.cs" Condition=" '$(TargetFramework)' == 'net461'" />
     <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netstandard2.0'" />
     <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netcore2.0'" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' != 'net40'">
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
 
@@ -56,4 +57,17 @@
     <Reference Include="System.Web" />
   </ItemGroup>
 
+  <!-- .NET 4.0 references, compilation flags and build options -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40'">
+    <DefineConstants>NET46;NETFULL</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
 </Project>

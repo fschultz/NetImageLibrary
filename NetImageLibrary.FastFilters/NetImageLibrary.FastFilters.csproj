@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netstandard2.0;net461;</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0;net40;net461;</TargetFrameworks>
     <Version>4.0-alpha</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>Kaliko.ImageLibrary.FastFilters</RootNamespace>
@@ -14,7 +14,7 @@
     <Authors>Fredrik Schultz / Kaliko</Authors>
     <Copyright>Fredrik Schultz and Contributors</Copyright>
     <Description>Optimized multi-threaded graphical filters for .NET Image Library to use in full trust environments. Including gaussian blur, unsharp mask, brightness, contrast, chroma key and more.</Description>
-    <Product>.NET Image Library</Product>
+    <Product>.NET Image Library Fast Filters</Product>
     <PackageTags>image resize crop thumbnail filters unsharpen chromakey</PackageTags>
     <Company></Company>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -25,6 +25,7 @@
     <ProjectReference Include="..\NetImageLibrary.Core\NetImageLibrary.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="**\*_NETCORE.cs" Condition=" '$(TargetFramework)' == 'net40'" />
     <Compile Remove="**\*_NETCORE.cs" Condition=" '$(TargetFramework)' == 'net461'" />
     <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netstandard2.0'" />
     <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netcore2.0'" />
@@ -53,4 +54,16 @@
     <Reference Include="System.Web" />
   </ItemGroup>
 
+  <!-- .NET 4.0 references, compilation flags and build options -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40'">
+    <DefineConstants>NET46;NETFULL</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
 </Project>
