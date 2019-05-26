@@ -48,6 +48,9 @@ namespace Kaliko.ImageLibrary {
         }
 
 #if NET46
+    // httpresponse doesn't exist in netStandard, at least not in the same way. Can't
+    // get the outputstream, even if you use the extensions & abstractons packages. 
+
         internal static Stream PrepareImageStream(string fileName, string mime) {
             HttpResponse stream = HttpContext.Current.Response;
             stream.Clear();

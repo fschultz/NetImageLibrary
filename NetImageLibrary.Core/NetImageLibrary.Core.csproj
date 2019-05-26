@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461;</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0;net461;</TargetFrameworks>
     <Version>4.0-alpha</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>Kaliko.ImageLibrary</RootNamespace>
@@ -12,7 +12,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/fschultz/NetImageLibrary</RepositoryUrl>
     <Authors>Fredrik Schultz / Kaliko</Authors>
-    <Copyright>Fredrik Schultz / Kaliko</Copyright>
+    <Copyright>Fredrik Schultz and Contributors</Copyright>
     <Description>Library to help with image handling such as resizing, cropping, applying filters (brightess, contrast, unsharpen mask, chroma key etc), watermarking, thumbnail creation, opening/saving files or streams and more.</Description>
     <Product>.NET Image Library</Product>
     <PackageTags>image resize crop thumbnail filters unsharpen chromakey</PackageTags>
@@ -20,12 +20,28 @@
     <PackageReleaseNotes>* Migrated projects to be compatible with .NET 4.x and Core</PackageReleaseNotes>
     <DocumentationFile>.\NetImageLibrary.Core.xml</DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\*_NETCORE.cs" Condition=" '$(TargetFramework)' == 'net461'" />
+    <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netstandard2.0'" />
+    <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netcore2.0'" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+  </ItemGroup>
 
   <!-- .NET Standard 2.0 references, compilation flags and build options -->
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+    <DefineConstants>NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
 
+  <!-- .NET Core 2.0 references, compilation flags and build options -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
+    <DefineConstants>NETCOREAPP;NETCOREAPP2_0</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
+    <PackageReference Include="System.IO" Version="4.3.0" />
+  </ItemGroup>
+  
   <!-- .NET 4.6.x references, compilation flags and build options -->
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net461'">
     <DefineConstants>NET46;NETFULL</DefineConstants>
@@ -38,13 +54,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="**\*_NETCORE.cs" Condition=" '$(TargetFramework)' == 'net461'" />
-    <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netstandard2.0'" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
 
 </Project>

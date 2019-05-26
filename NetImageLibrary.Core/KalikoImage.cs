@@ -680,9 +680,7 @@ namespace Kaliko.ImageLibrary {
             Image = image.Image;
         }
 
-
         #endregion
-
 
         #region Functions for image saving and streaming
 
@@ -696,7 +694,6 @@ namespace Kaliko.ImageLibrary {
             var imageStream = ImageOutput.PrepareImageStream(fileName, "image/jpeg");
             SaveJpg(imageStream, quality);
         }
-
 
         /// <summary>
         /// Save image to the response stream in PNG-format. Ideal for sending realtime generated images to the web client requesting it.
@@ -718,7 +715,7 @@ namespace Kaliko.ImageLibrary {
 
 #endif
 
-#if NETCORE
+#if NETCOREAPP || NETSTANDARD
 #pragma warning disable 1591
         [Obsolete("Use SaveJpg passing your stream instead")]
         public void StreamJpg(long quality, string fileName) { throw new NotImplementedException(); }
