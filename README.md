@@ -26,7 +26,153 @@ Current build contains the following filters:
 
 If you plan using this library with WPF or simular, read this post on <a href="http://labs.kaliko.com/2011/03/convert-to-bitmapimage.html">how to convert an KalikoImage object to System.Windows.Media.Imaging.BitmapImage and System.Windows.Controls.Image</a>.
 
+## Examples
+
+### Crop scaling
+Scale by cropping the image to cover the requested width and height:
+```csharp
+    using (var image = new KalikoImage(ImageFilePath)) {
+        image
+            .Scale(new CropScaling(500, 500))
+            .SaveJpg(OutputFilePath, 80);
+    }
+```
+
+### Fit scaling
+Scale by fitting the image inside the requested width and height:
+```csharp
+    using (var image = new KalikoImage(ImageFilePath)) {
+        image
+            .Scale(new FitScaling(500, 500))
+            .SaveJpg(OutputFilePath, 80);
+    }
+```
+
+### Pad scaling
+Scale by fitting the image inside the requested width and height and then pad to the width and height using colour:
+```csharp
+    using (var image = new KalikoImage(ImageFilePath)) {
+        image
+            .Scale(new PadScaling(500, 500, Color.Crimson))
+            .SaveJpg(OutputFilePath, 80);
+    }
+```
+
+### Focal point scaling
+Similar to the crop scaling but takes a focal point as parameter to determine the point of interest when cropping the image:
+```csharp
+    using (var image = new KalikoImage(ImageFilePath)) {
+        image
+            .Scale(new FocalPointScaling(500, 500, 0.75, 1))
+            .SaveJpg(OutputFilePath, 80);
+    }
+```
+
+### Brightness filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastBrightnessFilter(50));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Contrast filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastContrastFilter(50));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Chroma key filter (green screen)
+```csharp
+    using (var image = new KalikoImage("c:\\images\\greenscreen.jpg"))) {
+        // Make green screen parts transparent
+        image.ApplyFilter(new FastChromaKeyFilter(Color.FromArgb(13, 161, 37), 40, 0.5f, 0.75f));
+
+        using (var background = new KalikoImage("c:\\images\\backdrop.jpg")) {
+            // Apply cleaned green screen image over backdrop
+            background.BlitImage(image);
+            background.SaveJpg(OutputPath, 80);
+        }
+    }
+```
+
+### Desaturate filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastDesaturationFilter());
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Gaussian blur filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastGaussianBlurFilter(1.1f));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Invert filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastInvertFilter());
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Unsharp mask filter
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        image.ApplyFilter(new FastUnsharpMaskFilter(1.1f, 0.44f, 0));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Draw text
+```csharp
+    using (var image = new KalikoImage(ImagePath)) {
+        var text = new TextField("Lorem ipsum") {
+            Alignment = StringAlignment.Center,
+            VerticalAlignment = StringAlignment.Center,
+            Outline = 5,
+            OutlineColor = Color.Red,
+            Font = new Font("Arial", 60),
+            Rotation = 30f,
+            TextColor = Color.DarkOrange,
+            TextShadow = new TextShadow(Color.FromArgb(128, 0, 0, 0), 4, 4)
+        };
+        image.DrawText(text);
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Gradient fill
+```csharp
+    using (var image = new KalikoImage(ImagePath))
+    {
+        image.GradientFill(Color.FromArgb(128, 255, 200, 90), Color.FromArgb(128, 255, 64, 0));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+### Watermark
+```csharp
+    using (var image = new KalikoImage(ImagePath))
+    {
+        image.BlitFill("c:\\images\\semi-transparent-watermark.png"));
+        image.SaveJpg(OutputPath, 80);
+    }
+```
+
+
 ## History
+
+**4.0.0**
+* Migrated projects to be compatible with .NET 4.x and Core
+* Added FocalPointScaling as an alternative to crop scaling but that allows to define the point of interest
+
 **3.0.2**
 * Fixed bug where BlitFill doesn't properly fill portrait sized images
 
