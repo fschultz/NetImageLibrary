@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netstandard2.0;net40;net461;</TargetFrameworks>
-    <Version>4.0-alpha</Version>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0;net40;net461;net5.0</TargetFrameworks>
+    <Version>4.0-beta1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>Kaliko.ImageLibrary.FastFilters</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -29,6 +29,7 @@
     <Compile Remove="**\*_NETCORE.cs" Condition=" '$(TargetFramework)' == 'net461'" />
     <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netstandard2.0'" />
     <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'netcore2.0'" />
+    <Compile Remove="**\*_NET46.cs" Condition=" '$(TargetFramework)' == 'net5.0'" />
   </ItemGroup>
 
   <!-- .NET Standard 2.0 references, compilation flags and build options -->
@@ -41,6 +42,11 @@
     <DefineConstants>NETCOREAPP;NETCOREAPP2_0</DefineConstants>
   </PropertyGroup>
 
+  <!-- .NET Core 2.0 references, compilation flags and build options -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0'">
+    <DefineConstants>NETCOREAPP;NET5_0</DefineConstants>
+  </PropertyGroup>
+  
   <!-- .NET 4.6.x references, compilation flags and build options -->
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net461'">
     <DefineConstants>NET46;NETFULL</DefineConstants>
